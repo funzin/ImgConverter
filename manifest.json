@@ -5,7 +5,8 @@
   "manifest_version": 2,
   "permissions": [
     "clipboardWrite",
-    "activeTab"
+    "activeTab",
+    "storage"
   ],
   "background": {
     "scripts": [
@@ -17,5 +18,5 @@
   "browser_action": {
     "name": "convertImageTag"
   },
-  "options_page": "options.html",
+  "options_page": "options.html"
 }

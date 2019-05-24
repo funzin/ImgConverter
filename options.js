@@ -1,15 +1,18 @@
-$(function(){
+$(function () {
   $("#save").click(function () {
-    localStorage["width"] = $("#width").val();
-    localStorage["height"] = $("#height").val();
+    let width = $("#width").val();
+    let height = $("#height").val();
+    let size = {
+      width: width,
+      height: height,
+    }
+    chrome.storage.sync.set(size, function () { });
   });
 
-  // configure width and height
-  if (localStorage["width"]) {
-    $("#width").val(localStorage["width"]);
-  }
-  if (localStorage["height"]) {
-    $("#height").val(localStorage["height"]);
-  }
-  
+  chrome.storage.sync.get(
+    function (size) {
+      $("#width").val(size.width);
+      $("#height").val(size.height);
+    }
+  )
 });
