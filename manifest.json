@@ -1,0 +1,19 @@
+{
+  "name": "ConvertImageTag",
+  "version": "0.1",
+  "description": "convert to image tag",
+  "manifest_version": 2,
+  "permissions": [
+    "clipboardWrite",
+    "activeTab"
+  ],
+  "background": {
+    "scripts": [
+      "main.js"
+    ],
+    "persistant": false
+  },
+  "browser_action": {
+    "name": "convertImageTag"
+  }
+}
