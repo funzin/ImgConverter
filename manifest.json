@@ -9,11 +9,13 @@
   ],
   "background": {
     "scripts": [
-      "main.js"
+      "jquery-3.4.1.min.js",
+      "background.js"
     ],
     "persistant": false
   },
   "browser_action": {
     "name": "convertImageTag"
-  }
+  },
+  "options_page": "options.html",
 }

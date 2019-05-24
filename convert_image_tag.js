@@ -1,5 +1,5 @@
 var resultArray = [];
-var width="200px"
+var widthAndHeihgt = "";
 
 var activeTextElement = document.activeElement;
 var textAreaStr = activeTextElement.value
@@ -12,7 +12,7 @@ if (mdImageArray != null) {
 
     // Convert image tag
     if (imageURL != undefined) {
-      let imageTag = `<image src=${imageURL} width=${width}>`;
+      let imageTag = `<image src=${imageURL} ${widthAndHeihgt}>`;
       resultArray.push([mdImage, imageTag])
     }
   }
@@ -24,3 +24,24 @@ if (mdImageArray != null) {
   }
   activeTextElement.value = textAreaStr
 }
+
+$(document).ready(function () {
+  widthAndHeihgt = getWidthAndHeight()
+
+  function getWidthAndHeight() {
+    var width = "50%"
+    var height = "50%"
+
+    var result = ""
+    if (localStorage["width"]) {
+      width = $("#width").val(localStorage["width"]);
+      result += ` widht=${width}`
+    }
+    if (localStorage["height"]) {
+      height = $("#height").val(localStorage["height"]);
+      result += ` height=${height}`
+    }
+
+    return result
+  }
+})
