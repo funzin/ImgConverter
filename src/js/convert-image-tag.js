@@ -6,11 +6,13 @@ chrome.storage.sync.get( function (storage) {
   var replacedText = convertToImgTag(textAreaStr, params)
 
   if (replacedText != null) {
-    activeTextElement.value = textAreaStr
+    activeTextElement.value = replacedText
   }
  })
 
 function convertToImgTag(text, params) {
+  var replacedText = text
+
   // Extract markdown notation image
   var mdImageArray = createMarkdownImages(text, params)
 
@@ -18,10 +20,10 @@ function convertToImgTag(text, params) {
 
   // Replace from markdown notation to image tag
   for (const mdImage of mdImageArray) {
-    text = text.replace(mdImage.mdImageText, mdImage.imageTag)
+    replacedText = replacedText.replace(mdImage.mdImageText, mdImage.imageTag)
   }
 
-  return text
+  return replacedText
 }
 
 function createMarkdownImages(text, params) {
