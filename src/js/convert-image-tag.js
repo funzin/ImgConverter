@@ -1,3 +1,4 @@
+console.log("a")
 chrome.storage.sync.get(
   function (storage) {
     var resultArray = []
@@ -6,29 +7,28 @@ chrome.storage.sync.get(
     var textAreaStr = activeTextElement.value
 
     // Extract markdown notation image
-    var mdImageArray = exractMdImageArray(textAreaStr)
+    var mdImageArray = createMarkdownImages(textAreaStr, params)
 
     if (mdImageArray != null) {
-      for (let mdImage of mdImageArray) {
-        let imageURL = mdImage.match(/https:\S+(jpg|jpeg|png)/i)[0]
-
-        // Convert image tag
-        if (imageURL != undefined) {
-          let imageTag = `<img src=${imageURL} ${params}>`
-          resultArray.push([mdImage, imageTag])
-        }
-      }
-
       // Replace from markdown notation to image tag
-      for (let result of resultArray) {
-        textAreaStr = textAreaStr.replace(result[0], result[1])
+      for (let mdImage of mdImageArray) {
+        textAreaStr = textAreaStr.replace(mdImage.mdImageText, mdImage.imageTag)
       }
       activeTextElement.value = textAreaStr
     }
   })
 
-function extractMdImageArray(text) {
-  return text.match(/\!\[\S*\]\(https:\/\/user-images.githubusercontent.com\S+(jpg|jpeg|png)\)/gmi)
+function createMarkdownImages(text, params) {
+  var markdownImageArray = []
+  let results = text.match(/\!\[\S*\]\(https:\/\/user-images.githubusercontent.com\S+(jpg|jpeg|png)\)/gmi)
+  if (results == null) { return null}
+
+  for (let markdownImage of results) {
+    let imageURL = markdownImage.match(/https:\S+(jpg|jpeg|png)/i)[0]
+    let imageTag = `<img src=${imageURL} ${params}>`
+    markdownImageArray.push(MarkdownImage(imageURL, markdownImage, imageTag))
+  }
+  return markdownImageArray
 }
 
 function createParams(storage) {
@@ -40,7 +40,6 @@ function createParams(storage) {
   if (storage.height != null && storage.height != "") {
     result += ` height=${storage.height}`
   }
-
 
   // Initialize
   if (result == "") {

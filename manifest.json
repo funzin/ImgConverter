@@ -9,13 +9,13 @@
   ],
   "background": {
     "scripts": [
-      "jquery-3.4.1.min.js",
-      "background.js"
+      "src/js/jquery-3.4.1.min.js",
+      "src/js/background.js"
     ],
     "persistant": false
   },
   "browser_action": {
     "name": "convert"
   },
-  "options_page": "options.html"
+  "options_page": "src/html/options.html"
 }
