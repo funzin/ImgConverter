@@ -17,6 +17,6 @@
   },
   "homepage": "https://github.com/funzin/ConvertToImageTag#readme",
   "devDependencies": {
-    "jasmine": "~3.4.0"
+    "jasmine": "^3.4.0"
   }
 }
