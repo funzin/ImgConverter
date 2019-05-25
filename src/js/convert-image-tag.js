@@ -9,8 +9,7 @@ chrome.storage.sync.get(
     var mdImageArray = exractMdImageArray(textAreaStr)
 
     if (mdImageArray != null) {
-      for (let index in mdImageArray) {
-        let mdImage = mdImageArray[index]
+      for (let mdImage of mdImageArray) {
         let imageURL = mdImage.match(/https:\S+(jpg|jpeg|png)/i)[0]
 
         // Convert image tag
@@ -21,8 +20,7 @@ chrome.storage.sync.get(
       }
 
       // Replace from markdown notation to image tag
-      for (let index in resultArray) {
-        let result = resultArray[index]
+      for (let result of resultArray) {
         textAreaStr = textAreaStr.replace(result[0], result[1])
       }
       activeTextElement.value = textAreaStr
