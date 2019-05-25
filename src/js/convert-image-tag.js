@@ -1,8 +1,7 @@
-console.log("a")
 chrome.storage.sync.get(
   function (storage) {
     var resultArray = []
-    var params = _createParams(storage)
+    var params = createParams(storage)
     var activeTextElement = document.activeElement
     var textAreaStr = activeTextElement.value
 
@@ -26,7 +25,7 @@ function createMarkdownImages(text, params) {
   for (let markdownImage of results) {
     let imageURL = markdownImage.match(/https:\S+(jpg|jpeg|png)/i)[0]
     let imageTag = `<img src=${imageURL} ${params}>`
-    markdownImageArray.push(MarkdownImage(imageURL, markdownImage, imageTag))
+    markdownImageArray.push(new MarkdownImage(imageURL, markdownImage, imageTag))
   }
   return markdownImageArray
 }
