@@ -6,7 +6,7 @@ $(function () {
       width: width,
       height: height,
     }
-    chrome.storage.sync.set(size, function () { });
+    chrome.storage.sync.set(size);
   });
 
   chrome.storage.sync.get(

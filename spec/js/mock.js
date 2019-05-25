@@ -3,8 +3,7 @@ chrome = {
     sync: {
       set: function() {
       },
-      get: function() {
-
+      get: function(storage) {
       }
     }
   }

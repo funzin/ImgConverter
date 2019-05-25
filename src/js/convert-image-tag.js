@@ -1,21 +1,21 @@
 chrome.storage.sync.get(
   function (storage) {
-    var resultArray = [];
+    var resultArray = []
     var params = _createParams(storage)
-    var activeTextElement = document.activeElement;
+    var activeTextElement = document.activeElement
     var textAreaStr = activeTextElement.value
 
     // Extract markdown notation image
-    var mdImageArray = textAreaStr.match(/\!\[\S*\]\(https:\/\/user-images.githubusercontent.com\S+(jpg|jpeg|png)\)/gmi);
+    var mdImageArray = exractMdImageArray(textAreaStr)
 
     if (mdImageArray != null) {
       for (let index in mdImageArray) {
         let mdImage = mdImageArray[index]
-        let imageURL = mdImage.match(/https:\S+(jpg|jpeg|png)/i)[0];
+        let imageURL = mdImage.match(/https:\S+(jpg|jpeg|png)/i)[0]
 
         // Convert image tag
         if (imageURL != undefined) {
-          let imageTag = `<img src=${imageURL} ${params}>`;
+          let imageTag = `<img src=${imageURL} ${params}>`
           resultArray.push([mdImage, imageTag])
         }
       }
@@ -28,6 +28,11 @@ chrome.storage.sync.get(
       activeTextElement.value = textAreaStr
     }
   })
+
+function extractMdImageArray(text) {
+  return text.match(/\!\[\S*\]\(https:\/\/user-images.githubusercontent.com\S+(jpg|jpeg|png)\)/gmi)
+}
+
 function createParams(storage) {
   var result = ""
   if (storage.width != null && storage.width != "") {
