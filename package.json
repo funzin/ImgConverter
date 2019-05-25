@@ -1,0 +1,22 @@
+{
+  "name": "converttoimagetag",
+  "version": "1.0.0",
+  "description": "",
+  "main": "background.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/funzin/ConvertToImageTag.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/funzin/ConvertToImageTag/issues"
+  },
+  "homepage": "https://github.com/funzin/ConvertToImageTag#readme",
+  "devDependencies": {
+    "jasmine": "~3.4.0"
+  }
+}
