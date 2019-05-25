@@ -16,7 +16,7 @@ $(function () {
 
           // Convert image tag
           if (imageURL != undefined) {
-            let imageTag = `<image src=${imageURL} ${params}>`;
+            let imageTag = `<img src=${imageURL} ${params}>`;
             resultArray.push([mdImage, imageTag])
           }
         }
