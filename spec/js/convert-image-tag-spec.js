@@ -1,3 +1,33 @@
+// Function test
+describe("convertToImgTag", function(){
+  var text;
+  var result;
+
+  describe('when text contains markdown image', function () {
+    beforeEach(function () {
+      text = "hogehoge![title](https://user-images.githubusercontent.com/test0.png)\n \
+              hogehoge![title](https://user-images.githubusercontent.com/test1.png)"
+      result = convertToImgTag(text, "")
+    })
+    it('should return replaced text', function () {
+      text = "hogehoge<img src=https://user-images.githubusercontent.com/test0.png >\n \
+              hogehoge<img src=https://user-images.githubusercontent.com/test1.png >"
+      expect(result).toEqual(text)
+    })
+  }) 
+
+  describe('when text does not contain markdown image', function () {
+    beforeEach(function () {
+      text = "hogehoge\nhogehoge"
+      result = convertToImgTag(text, "")
+    })
+    it('should return null', function () {
+      expect(result).toEqual(null)
+    })
+  }) 
+})
+
+
 describe('createParams', function () {
   var result;
   var storage;
@@ -55,14 +85,14 @@ describe('createParams', function () {
   })
 })
 
-describe('extractMdImageArray', function () {
+describe('createMarkdownImages', function () {
   var result;
   var text;
 
   describe('when text is empty', function () {
     beforeEach(function () {
       text = ""
-      result = extractMdImageArray(text)
+      result = createMarkdownImages(text, "")
     })
     it('should return null', function () {
       expect(result).toEqual(null)
@@ -72,7 +102,7 @@ describe('extractMdImageArray', function () {
   describe('when text does not contain md image', function () {
       beforeEach(function () {
         text = "hogehoge"
-        result = extractMdImageArray(text)
+        result = createMarkdownImages(text, "")
       })
       it('should return null ', function () {
         expect(result).toEqual(null)
@@ -81,7 +111,7 @@ describe('extractMdImageArray', function () {
   describe('when text contains only different extension', function () {
       beforeEach(function () {
         text = "hogehoge![title](https://user-images.githubusercontent.com/test.mp3)hogehoge"
-        result = extractMdImageArray(text)
+        result = createMarkdownImages(text, "")
       })
       it('should return null ', function () {
         expect(result).toEqual(null)
@@ -90,39 +120,40 @@ describe('extractMdImageArray', function () {
   describe('when text contains md image', function () {
     describe('when text contains one md image', function () {
       beforeEach(function () {
-        text = "hogehoge![title](https://user-images.githubusercontent.com/test.png)hogehoge"
-        result = extractMdImageArray(text)
+        text = "hogehoge![title](https://user-images.githubusercontent.com/test1.png)hogehoge"
+        result = createMarkdownImages(text, "")
       })
       it('should match one md image ', function () {
+        let markdownImage = result[0]
+        let imageURL = "https://user-images.githubusercontent.com/test1.png"
+        let imageTag = "<img src=https://user-images.githubusercontent.com/test1.png >"
+        let mdImageText = "![title](https://user-images.githubusercontent.com/test1.png)"
+
         expect(result.length).toEqual(1)
-        expect(result[0]).toEqual("![title](https://user-images.githubusercontent.com/test.png)")
+        expect(markdownImage.url).toEqual(imageURL)
+        expect(markdownImage.imageTag).toEqual(imageTag)
+        expect(markdownImage.mdImageText).toEqual(mdImageText)
       })
     })
+
     describe('when text contains two md images', function () {
       beforeEach(function () {
-        text = "hogehoge![title](https://user-images.githubusercontent.com/test.png)hogehoge\n \
-                hogehoge![title](https://user-images.githubusercontent.com/test2.png)hogehoge"
-        result = extractMdImageArray(text)
+        text = "hogehoge![title](https://user-images.githubusercontent.com/test0.png)hogehoge\n \
+                hogehoge![title](https://user-images.githubusercontent.com/test1.png)hogehoge"
+        result = createMarkdownImages(text, "")
       })
       it('should match two md images', function () {
         expect(result.length).toEqual(2)
-        expect(result[0]).toEqual("![title](https://user-images.githubusercontent.com/test.png)")
-        expect(result[1]).toEqual("![title](https://user-images.githubusercontent.com/test2.png)")
+
+        result.forEach((markdownImage, index) => {
+          expect(markdownImage.url).toEqual(`https://user-images.githubusercontent.com/test${index}.png`)
+          expect(markdownImage.imageTag).toEqual(`<img src=https://user-images.githubusercontent.com/test${index}.png >`)
+          expect(markdownImage.mdImageText).toEqual(`![title](https://user-images.githubusercontent.com/test${index}.png)`)
+        })
+
+        for(let markdownImage of result) {
+        }
       })
     })
   })
 })
-/*
-- markdownのやつらを取り出せるか
-  - 含まれないとき
-  - 拡張子違うとき
-  - 正しいとき
-    - 1個取れるか
-    - 複数取れるか
-- URLを取り出せるか(保留)
-- imgタグになっているか
-  - imgタグになっているか
-- 置換が成功しているか
-  - 成功例
-  - 失敗例
- */
