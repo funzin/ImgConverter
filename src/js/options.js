@@ -11,7 +11,12 @@ function setText(size) {
   $("#width").val(size.width);
   $("#height").val(size.height);
 }
-function didTapSaveButton() {
+
+$(document).on('click','#save', function() {
+    saveSize()
+})
+
+function saveSize() {
   const width = $("#width").val();
   const height = $("#height").val();
   const size = {
