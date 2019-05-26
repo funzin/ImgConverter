@@ -3,6 +3,20 @@
     <img src="./resource/image/thumbnail.png" alt="imgconverter" width="60%" height="60%" />
 </p>
 
+<p align="center">
+  <a href=https://travis-ci.org/funzin/ImgConverter>
+    <img src=https://travis-ci.org/funzin/ImgConverter.svg?branch=master />
+  </a>
+  <a href=https://developer.mozilla.org/ja/docs/Web/JavaScript>
+    <img src="http://img.shields.io/badge/javascript-yellow.svg?style=flat" alt="Language">
+  </a>
+  <a href=https://chrome.google.com/webstore/detail/imgconverter-for-github/pkgimcoeodgcdfnidhgijpopkfhbcomm>
+    <img src="http://img.shields.io/badge/chrome extensions-gray.svg?style=flat">
+  </a>
+  <a href=https://chrome.google.com/webstore/detail/imgconverter-for-github/pkgimcoeodgcdfnidhgijpopkfhbcomm>
+    <img src=https://img.shields.io/chrome-web-store/price/pkgimcoeodgcdfnidhgijpopkfhbcomm.svg>
+   </a>
+</p>
 
 ## Overview
 ImgConverter is chrome extension that converts form image of markdown notation to img tag(`<img>`) when you upload images to issue or Pull Request on Github.
