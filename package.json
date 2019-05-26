@@ -13,7 +13,8 @@
     "karma-html2js-preprocessor": "^1.1.0"
   },
   "scripts": {
-    "test": "./node_modules/karma/bin/karma start"
+    "test": "./node_modules/karma/bin/karma start --single-run --browsers Chrome",
+    "debug_test": "./node_modules/karma/bin/karma start --browsers Chrome"
   },
   "repository": {
     "type": "git",
