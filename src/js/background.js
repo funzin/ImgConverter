@@ -1,8 +1,7 @@
 chrome.browserAction.onClicked.addListener(function (tab) {
     executeScripts(null, [ 
-        { file: "src/lib/jquery-3.4.1.min.js" }, 
         { file: "src/js/markdown-image.js" },
-        { file: "src/js/convert-image-tag.js" }
+        { file: "src/js/convert-to-img-tag.js" }
     ])
 });
 
