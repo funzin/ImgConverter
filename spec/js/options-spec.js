@@ -59,15 +59,15 @@ describe('Storage', function () {
       expect(spyObj).toHaveBeenCalledWith({ width: "", height: "200" })
     })
   })
-})
-describe('when input width and height', function () {
-  beforeEach(function () {
-    $("#width").val("200")
-    $("#height").val("200")
-    spyObj = spyOn(chrome.storage.sync, "set")
-    $("#save").click()
+  describe('when input width and height', function () {
+    beforeEach(function () {
+      $("#width").val("200")
+      $("#height").val("200")
+      spyObj = spyOn(chrome.storage.sync, "set")
+      $("#save").click()
+    })
+    it('should save width and height', function () {
+      expect(spyObj).toHaveBeenCalledWith({ width: "200", height: "200" })
+    });
   })
-  it('should save width and height', function () {
-    expect(spyObj).toHaveBeenCalledWith({ width: "200", height: "200" })
-  });
 })
