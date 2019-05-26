@@ -28,10 +28,8 @@ describe('Storage', function () {
     });
   });
 
-  describe('when no input', function () {
-    beforeEach(function () {
-    })
-    describe('when tap save button', function () {
+  describe('when tap save button', function () {
+    describe('when no input', function () {
       beforeEach(function () {
         spyObj = spyOn(chrome.storage.sync, "set")
         $("#save").click()
@@ -40,13 +38,9 @@ describe('Storage', function () {
         expect(spyObj).toHaveBeenCalledWith({ width: "", height: "" })
       });
     });
-  });
-  describe('when input width only', function () {
-    beforeEach(function () {
-      $("#width").val("200")
-    })
-    describe('when tap save button', function () {
+    describe('when input width only', function () {
       beforeEach(function () {
+        $("#width").val("200")
         spyObj = spyOn(chrome.storage.sync, "set")
         $("#save").click()
       })
@@ -58,30 +52,22 @@ describe('Storage', function () {
   describe('when input height only', function () {
     beforeEach(function () {
       $("#height").val("200")
+      spyObj = spyOn(chrome.storage.sync, "set")
+      $("#save").click()
     })
-    describe('when tap save button', function () {
-      beforeEach(function () {
-        spyObj = spyOn(chrome.storage.sync, "set")
-        $("#save").click()
-      })
-      it('should save height', function () {
-        expect(spyObj).toHaveBeenCalledWith({ width: "", height: "200" })
-      })
+    it('should save height', function () {
+      expect(spyObj).toHaveBeenCalledWith({ width: "", height: "200" })
     })
   })
-  describe('when input width and height', function () {
-    beforeEach(function () {
-      $("#width").val("200")
-      $("#height").val("200")
-    })
-    describe('when tap save button', function () {
-      beforeEach(function () {
-        spyObj = spyOn(chrome.storage.sync, "set")
-        $("#save").click()
-      })
-      it('should save width and height', function () {
-        expect(spyObj).toHaveBeenCalledWith({ width: "200", height: "200" })
-      });
-    })
+})
+describe('when input width and height', function () {
+  beforeEach(function () {
+    $("#width").val("200")
+    $("#height").val("200")
+    spyObj = spyOn(chrome.storage.sync, "set")
+    $("#save").click()
   })
+  it('should save width and height', function () {
+    expect(spyObj).toHaveBeenCalledWith({ width: "200", height: "200" })
+  });
 })
