@@ -7,7 +7,7 @@
 ## Overview
 ImgConverter is chrome extension that converts form image of markdown notation to img tag(`<img>`) when you upload images to issue or Pull Request on Github.
 
-- Chrome Extensions: link
+- Chrome Extensions: [ImgConverter](https://chrome.google.com/webstore/detail/imgconverter-for-github/pkgimcoeodgcdfnidhgijpopkfhbcomm)
 
 ## Support image format
 - PNG (.png)
