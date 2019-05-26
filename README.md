@@ -5,11 +5,11 @@
 
 
 ## Overview
-👷ImgConverter is chrome extension that converts form image of markdown notation to img tag(`<img>`) when you upload images to issue or Pull Request on Github.
+ImgConverter is chrome extension that converts form image of markdown notation to img tag(`<img>`) when you upload images to issue or Pull Request on Github.
 
 - Chrome Extensions: link
 
-## Support Image format
+## Support image format
 - PNG (.png)
 - JPEG (.jpg)
 
@@ -22,13 +22,14 @@
 It's simple.👨‍💻
 1. Upload images to issue or pull request or comment on Github
 2. Tap ImgConverter icon
-3. Converted img tag!!
+3. **Converted `<img>`!!**
 
 ## Options
 You can set default values for width and height of `<img>` on option page.
 
-1. Right click on ImgConverter icon and then tap [Options]
+1. Right click on ImgConverter icon and then tap `[Options]`
 <img src=resource/image/screenshot/right_click.png width=50%>
+<br>
 2. Show options page
 <img src=resource/image/screenshot/options.png width=50%>
 
@@ -80,7 +81,7 @@ Input `width=200px`, `height=200px`
 
 
 ## Contact
-If you discover a problem or have opinions, please let me know through [Github issues](https://github.com/funzin/ImgConverter/issues)💁‍♂️
+If you discover problem or have opinions, please let me know through [Github issues](https://github.com/funzin/ImgConverter/issues)💁‍♂️
 
 ## Author
 funzin, nakazawa.fumito@gmail.com
