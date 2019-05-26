@@ -1,7 +1,7 @@
 {
-  "name": "ConvertToImageTag",
+  "name": "ImgConverter for Github",
   "version": "0.1",
-  "description": "convert to image tag",
+  "description": "ImgConverter changes from image of markdown notion to to img tag",
   "manifest_version": 2,
   "permissions": [
     "activeTab",
