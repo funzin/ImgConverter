@@ -150,9 +150,6 @@ describe('createMarkdownImages', function () {
           expect(markdownImage.imageTag).toEqual(`<img src=https://user-images.githubusercontent.com/test${index}.png >`)
           expect(markdownImage.mdImageText).toEqual(`![title](https://user-images.githubusercontent.com/test${index}.png)`)
         })
-
-        for(let markdownImage of result) {
-        }
       })
     })
   })
