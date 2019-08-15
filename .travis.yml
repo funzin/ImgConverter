@@ -11,4 +11,6 @@ install:
   - npm set progress=false
   - npm install
 scripts:
-  npm test
+  - npm test
+after_success:
+  - npm run codecov

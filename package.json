@@ -7,14 +7,17 @@
     "jasmine-core": "^3.4.0",
     "karma": "^4.2.0",
     "karma-chrome-launcher": "^3.1.0",
-    "karma-jasmine": "^2.0.1"
+    "karma-jasmine": "^2.0.1",
+    "codecov": "^3.5.0",
+    "karma-coverage": "^1.1.2"
   },
   "devDependencies": {
     "karma-html2js-preprocessor": "^1.1.0"
   },
   "scripts": {
     "test": "./node_modules/karma/bin/karma start --single-run --browsers Chrome",
-    "debug_test": "./node_modules/karma/bin/karma start --browsers Chrome"
+    "debug_test": "./node_modules/karma/bin/karma start --browsers Chrome",
+    "codecov": "codecov"
   },
   "repository": {
     "type": "git",

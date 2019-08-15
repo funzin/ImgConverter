@@ -15,7 +15,10 @@
   </a>
   <a href=https://chrome.google.com/webstore/detail/imgconverter-for-github/pkgimcoeodgcdfnidhgijpopkfhbcomm>
     <img src=https://img.shields.io/chrome-web-store/price/pkgimcoeodgcdfnidhgijpopkfhbcomm.svg>
-   </a>
+  </a>
+  <a href=https://codecov.io/gh/funzin/ImgConverter>
+    <img src=https://codecov.io/gh/funzin/ImgConverter/branch/master/graph/badge.svg>
+  </a>
 </p>
 
 ## Overview
