@@ -31,7 +31,7 @@ ImgConverter is chrome extension that converts form image of markdown notation t
 - JPEG (.jpg)
 
 ## Environment
-- javascript
+- Javascript
 - node(v12.1.0)
 - npm(v6.9.0)
 - karma(jasmine)
@@ -40,6 +40,7 @@ ImgConverter is chrome extension that converts form image of markdown notation t
 - Github
 - esa
 - Docbase
+
 etc.
 
 ## DEMO
