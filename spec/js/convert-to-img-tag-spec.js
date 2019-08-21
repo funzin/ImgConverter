@@ -6,12 +6,12 @@ describe("convertToImgTag", function(){
   describe('when text contains markdown image', function () {
     beforeEach(function () {
       text = "hogehoge![title](https://user-images.githubusercontent.com/test0.png)\n \
-              hogehoge![title](https://user-images.githubusercontent.com/test1.png)"
+              hogehoge![title](https://img.esa.io/uploads/production/pictures/image/test1.png)"
       result = convertToImgTag(text, "")
     })
     it('should return replaced text', function () {
       text = "hogehoge<img src=https://user-images.githubusercontent.com/test0.png >\n \
-              hogehoge<img src=https://user-images.githubusercontent.com/test1.png >"
+              hogehoge<img src=https://img.esa.io/uploads/production/pictures/image/test1.png >"
       expect(result).toEqual(text)
     })
   }) 
@@ -19,12 +19,12 @@ describe("convertToImgTag", function(){
   describe('when image title contains space', function () {
     beforeEach(function () {
       text = "hogehoge![hello world](https://user-images.githubusercontent.com/test0.png)\n \
-              hogehoge![hello world](https://user-images.githubusercontent.com/test1.png)"
+              hogehoge![hello world](https://img.esa.io/uploads/production/pictures/image/test1.png)"
       result = convertToImgTag(text, "")
     })
     it('should return replaced text', function () {
       text = "hogehoge<img src=https://user-images.githubusercontent.com/test0.png >\n \
-              hogehoge<img src=https://user-images.githubusercontent.com/test1.png >"
+              hogehoge<img src=https://img.esa.io/uploads/production/pictures/image/test1.png >"
       expect(result).toEqual(text)
     })
   }) 
