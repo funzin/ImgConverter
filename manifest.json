@@ -1,5 +1,5 @@
 {
-  "name": "ImgConverter for Github",
+  "name": "ImgConverter",
   "short_name": "ImgConverter",
   "version": "0.1.2",
   "description": "ImgConverter converts from image of markdown notation to to img tag",
