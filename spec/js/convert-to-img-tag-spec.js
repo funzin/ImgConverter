@@ -121,15 +121,34 @@ describe('createMarkdownImages', function () {
         expect(result).toEqual(null)
       })
     })
-  describe('when text contains only different extension', function () {
-      beforeEach(function () {
-        text = "hogehoge![title](https://user-images.githubusercontent.com/test.mp3)hogehoge"
-        result = createMarkdownImages(text, "")
-      })
-      it('should return null ', function () {
-        expect(result).toEqual(null)
+  describe('when text contains supported extensions', function () {
+    beforeEach(function () {
+      text = "hogehoge![title](https://user-images.githubusercontent.com/test0.jpg)\n \
+                hogehoge![title](https://user-images.githubusercontent.com/test1.png)\n \
+                hogehoge![title](https://user-images.githubusercontent.com/test2.jpeg)\n \
+                hogehoge![title](https://user-images.githubusercontent.com/test3.gif)"
+      result = createMarkdownImages(text, "")
+    })
+    it('should match four md images', function () {
+      let extensions = ["jpg", "png", "jpeg", "gif"]
+      expect(result.length).toEqual(4)
+
+      result.forEach((markdownImage, index) => {
+        expect(markdownImage.url).toEqual(`https://user-images.githubusercontent.com/test${index}.${extensions[index]}`)
+        expect(markdownImage.imageTag).toEqual(`<img src=https://user-images.githubusercontent.com/test${index}.${extensions[index]} >`)
+        expect(markdownImage.mdImageText).toEqual(`![title](https://user-images.githubusercontent.com/test${index}.${extensions[index]})`)
       })
     })
+  })
+  describe('when text contains only different extension', function () {
+    beforeEach(function () {
+      text = "hogehoge![title](https://user-images.githubusercontent.com/test.mp3)hogehoge"
+      result = createMarkdownImages(text, "")
+    })
+    it('should return null ', function () {
+      expect(result).toEqual(null)
+    })
+  })
   describe('when text contains md image', function () {
     describe('when text contains one md image', function () {
       beforeEach(function () {
