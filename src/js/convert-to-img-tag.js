@@ -30,11 +30,11 @@ function convertToImgTag(text, params) {
 
 function createMarkdownImages(text, params) {
   let markdownImageArray = []
-  const results = text.match(/\!\[.*\]\(https:\/\/\S+(jpg|jpeg|png)\)/gmi)
+  const results = text.match(/\!\[.*\]\(https:\/\/\S+(jpg|jpeg|png|gif)\)/gmi)
   if (results == null) { return null}
 
   for (const mdImage of results) {
-    const imageURL = mdImage.match(/https:\S+(jpg|jpeg|png)/i)[0]
+    const imageURL = mdImage.match(/https:\S+(jpg|jpeg|png|gif)/i)[0]
     const imageTag = `<img src=${imageURL} ${params}>`
     const markdownImage = new MarkdownImage(imageURL, mdImage, imageTag)
     markdownImageArray.push(markdownImage)
