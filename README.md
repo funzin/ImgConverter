@@ -29,6 +29,7 @@ ImgConverter is chrome extension that converts form image of markdown notation t
 ## Support image format
 - PNG (.png)
 - JPEG (.jpg)
+- GIF (.gif)
 
 ## Environment
 - Javascript
