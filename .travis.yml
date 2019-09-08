@@ -7,10 +7,20 @@ addons:
   chrome: stable
 before_install:
   - export DISPLAY=:99.0
+before_script:
+  - yarn global add nyc
+  - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+  - chmod +x ./cc-test-reporter
+  - ./cc-test-reporter before-build
 install:
   - npm set progress=false
   - npm install
 scripts:
   - npm test
+  - nyc --reporter=lcov yarn run unit
 after_success:
   - npm run codecov
+after_script:
+  - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
+notifications:
+  email: false
