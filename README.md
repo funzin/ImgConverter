@@ -8,16 +8,19 @@
     <img src=https://travis-ci.org/funzin/ImgConverter.svg?branch=master />
   </a>
   <a href=https://developer.mozilla.org/ja/docs/Web/JavaScript>
-    <img src="http://img.shields.io/badge/javascript-yellow.svg?style=flat" alt="Language">
+    <img src="http://img.shields.io/badge/javascript-yellow.svg?style=flat" alt="Language" />
   </a>
   <a href=https://chrome.google.com/webstore/detail/imgconverter-for-github/pkgimcoeodgcdfnidhgijpopkfhbcomm>
-    <img src="http://img.shields.io/badge/chrome extensions-gray.svg?style=flat">
+    <img src="http://img.shields.io/badge/chrome extensions-gray.svg?style=flat" />
   </a>
   <a href=https://chrome.google.com/webstore/detail/imgconverter-for-github/pkgimcoeodgcdfnidhgijpopkfhbcomm>
-    <img src=https://img.shields.io/chrome-web-store/price/pkgimcoeodgcdfnidhgijpopkfhbcomm.svg>
+    <img src=https://img.shields.io/chrome-web-store/price/pkgimcoeodgcdfnidhgijpopkfhbcomm.svg />
   </a>
   <a href=https://codecov.io/gh/funzin/ImgConverter>
-    <img src=https://codecov.io/gh/funzin/ImgConverter/branch/master/graph/badge.svg>
+    <img src=https://codecov.io/gh/funzin/ImgConverter/branch/master/graph/badge.svg />
+  </a>
+  <a href="https://codeclimate.com/github/funzin/ImgConverter/maintainability">
+    <img src="https://api.codeclimate.com/v1/badges/81d980e5e11a3be3a9c6/maintainability" />
   </a>
 </p>
 
