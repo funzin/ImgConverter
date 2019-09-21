@@ -184,5 +184,21 @@ describe('createMarkdownImages', function () {
         })
       })
     })
+
+    describe('when one line of text contains two md images', function () {
+      beforeEach(function () {
+        text = "![title](https://user-images.githubusercontent.com/test0.png)|![title](https://user-images.githubusercontent.com/test1.png)hogehoge"
+        result = createMarkdownImages(text, "")
+      })
+      it('should match two md images', function () {
+        expect(result.length).toEqual(2)
+
+        result.forEach((markdownImage, index) => {
+          expect(markdownImage.url).toEqual(`https://user-images.githubusercontent.com/test${index}.png`)
+          expect(markdownImage.imageTag).toEqual(`<img src=https://user-images.githubusercontent.com/test${index}.png >`)
+          expect(markdownImage.mdImageText).toEqual(`![title](https://user-images.githubusercontent.com/test${index}.png)`)
+        })
+      })
+    })
   })
 })
