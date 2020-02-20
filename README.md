@@ -54,8 +54,18 @@ etc.
 ## Usage
 It's simple.👨‍💻
 1. Upload images to issue or pull request or comment on Github
-2. Tap ImgConverter icon
-3. **Converted `<img>`!!**
+2. Select markdown image text(Optional)
+3. Tap ImgConverter icon
+4. **Converted `<img>`!!**
+
+## GIF
+### Not select text
+<img src=resource/gif/not_select.gif width=70%>
+Text is changed.
+
+### Select text
+<img src=resource/gif/select.gif width=70%>
+**Selected text** is only changed.
 
 ## Options
 You can set default values for width and height of `<img>` on option page.
