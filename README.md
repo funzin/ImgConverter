@@ -4,8 +4,8 @@
 </p>
 
 <p align="center">
-  <a href=https://travis-ci.org/funzin/ImgConverter>
-    <img src=https://travis-ci.org/funzin/ImgConverter.svg?branch=master />
+  <a href=https://travis-ci.com/funzin/ImgConverter>
+    <img src=https://travis-ci.com/funzin/ImgConverter.svg?branch=master />
   </a>
   <a href=https://developer.mozilla.org/ja/docs/Web/JavaScript>
     <img src="http://img.shields.io/badge/javascript-yellow.svg?style=flat" alt="Language" />
