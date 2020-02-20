@@ -40,6 +40,79 @@ describe("convertToImgTag", function(){
   }) 
 })
 
+describe("convertOnlySelectionToImgTag", function(){
+  var text;
+  var result;
+  var start;
+  var end;
+
+  describe('when text contains markdown image', function () {
+    beforeEach(function () {
+      text = "start![title](https://user-images.githubusercontent.com/test0.png)end"
+    })
+
+    describe('when markdown image text is selected', function () {
+      describe('when selection range is from text start to img tag end', function () {
+        beforeEach(function () {
+          start = 0
+          end = 66
+          result = convertOnlySelectionToImgTag(text, "", start, end)
+        })
+        it('should return replaced text', function () {
+          const answer = "start<img src=https://user-images.githubusercontent.com/test0.png >end"
+          expect(result).toEqual(answer)
+        })
+      })
+
+      describe('when selection range is from img tag start to img tag end', function () {
+        beforeEach(function () {
+          start = 5
+          end = 66
+          result = convertOnlySelectionToImgTag(text, "", start, end)
+        })
+        it('should return replaced text', function () {
+          const answer = "start<img src=https://user-images.githubusercontent.com/test0.png >end"
+          expect(result).toEqual(answer)
+        })
+      })
+
+      describe('when selection range is from img tag start to text end', function () {
+        beforeEach(function () {
+          start = 5
+          end = 70
+          result = convertOnlySelectionToImgTag(text, "", start, end)
+        })
+        it('should return replaced text', function () {
+          const answer = "start<img src=https://user-images.githubusercontent.com/test0.png >end"
+          expect(result).toEqual(answer)
+        })
+      })
+
+      describe('when selection range is from img tag start to img tag end', function () {
+        beforeEach(function () {
+          start = 5
+          end = 66
+          result = convertOnlySelectionToImgTag(text, "", start, end)
+        })
+        it('should return replaced text', function () {
+          const answer = "start<img src=https://user-images.githubusercontent.com/test0.png >end"
+          expect(result).toEqual(answer)
+        })
+      })
+    })
+
+    describe('when markdown image text is not selected', function () {
+      beforeEach(function () {
+        start = 0
+        end = 0
+        result = convertOnlySelectionToImgTag(text, "", start, end)
+      })
+      it('should return null', function () {
+        expect(result).toEqual(null)
+      })
+    })
+  })
+})
 
 describe('createParams', function () {
   var result;
