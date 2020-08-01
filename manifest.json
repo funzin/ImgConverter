@@ -1,7 +1,7 @@
 {
   "name": "ImgConverter",
   "short_name": "ImgConverter",
-  "version": "0.1.6",
+  "version": "0.2.0",
   "description": "ImgConverter converts from image of markdown notation to to img tag",
   "manifest_version": 2,
   "permissions": [
