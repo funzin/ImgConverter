@@ -18,11 +18,18 @@
   "browser_action": {
     "name": "convert"
   },
-  "options_page": "src/html/options.html",
+  "options_ui": {
+    "page": "src/html/options.html"
+  },
   "icons": {
     "16": "resource/image/icons/16.png",
     "48": "resource/image/icons/48.png",
     "128": "resource/image/icons/128.png"
+  },
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "@imgconverter"
+    }
   },
   "content_security_policy": "script-src 'self'; object-src 'self'"
 }
