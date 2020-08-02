@@ -13,6 +13,9 @@
   <a href=https://chrome.google.com/webstore/detail/imgconverter-for-github/pkgimcoeodgcdfnidhgijpopkfhbcomm>
     <img src="http://img.shields.io/badge/chrome extensions-gray.svg?style=flat" />
   </a>
+  <a href=https://addons.mozilla.org/en-US/firefox/addon/imgconverter/>
+    <img src="http://img.shields.io/badge/firefox_addons-purple.svg?style=flat" />
+  </a>
   <a href=https://chrome.google.com/webstore/detail/imgconverter-for-github/pkgimcoeodgcdfnidhgijpopkfhbcomm>
     <img src=https://img.shields.io/chrome-web-store/price/pkgimcoeodgcdfnidhgijpopkfhbcomm.svg />
   </a>
@@ -25,9 +28,11 @@
 </p>
 
 ## Overview
-ImgConverter is chrome extension that converts form image of markdown notation to img tag(`<img>`) when you upload images
+ImgConverter is browser extension that converts form image of markdown notation to img tag(`<img>`) when you upload images
 
+## Browser Extension
 - Chrome Extensions: [ImgConverter](https://chrome.google.com/webstore/detail/imgconverter-for-github/pkgimcoeodgcdfnidhgijpopkfhbcomm)
+- Firefox ADD-ONS: [ImgConverter](https://addons.mozilla.org/en-US/firefox/addon/imgconverter/)
 
 ## Support image format
 - PNG (.png)
