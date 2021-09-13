@@ -38,6 +38,19 @@ describe("convertToImgTag", function(){
       expect(result).toEqual(null)
     })
   }) 
+
+  describe('when text does not contain file extension', function () {
+    beforeEach(function () {
+      text = "hogehoge![title](https://user-images.githubusercontent.com/test0)\n \
+              hogehoge![title](https://img.esa.io/uploads/production/pictures/image/test1)"
+      result = convertToImgTag(text, "")
+    })
+    it('should return replaced text', function () {
+      text = "hogehoge<img src=https://user-images.githubusercontent.com/test0 >\n \
+              hogehoge<img src=https://img.esa.io/uploads/production/pictures/image/test1 >"
+      expect(result).toEqual(text)
+    })
+  }) 
 })
 
 describe("convertOnlySelectionToImgTag", function(){
@@ -213,13 +226,21 @@ describe('createMarkdownImages', function () {
       })
     })
   })
-  describe('when text contains only different extension', function () {
+  describe('when text does not contain file extension', function () {
     beforeEach(function () {
-      text = "hogehoge![title](https://user-images.githubusercontent.com/test.mp3)hogehoge"
+      text = "hogehoge![title](https://user-images.githubusercontent.com/test)hogehoge"
       result = createMarkdownImages(text, "")
     })
-    it('should return null ', function () {
-      expect(result).toEqual(null)
+    it('should match one md image ', function () {
+      let markdownImage = result[0]
+      let imageURL = "https://user-images.githubusercontent.com/test"
+      let imageTag = "<img src=https://user-images.githubusercontent.com/test >"
+      let mdImageText = "![title](https://user-images.githubusercontent.com/test)"
+
+      expect(result.length).toEqual(1)
+      expect(markdownImage.url).toEqual(imageURL)
+      expect(markdownImage.imageTag).toEqual(imageTag)
+      expect(markdownImage.mdImageText).toEqual(mdImageText)
     })
   })
   describe('when text contains md image', function () {
