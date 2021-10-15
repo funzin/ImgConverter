@@ -64,7 +64,7 @@ function createMarkdownImages(text, params) {
   if (results == null) { return null }
 
   for (const mdImage of results) {
-    const imageURL = mdImage.match(/\((\S+)\)/i)[1]
+    const imageURL = mdImage.match(/\((https:\S+)\)/i)[1]
     const imageTag = `<img src=${imageURL} ${params}>`
     const markdownImage = new MarkdownImage(imageURL, mdImage, imageTag)
     markdownImageArray.push(markdownImage)
