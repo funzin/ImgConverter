@@ -4,8 +4,8 @@
 </p>
 
 <p align="center">
-  <a href=https://travis-ci.com/funzin/ImgConverter>
-    <img src=https://github.com/funzin/ImgConverter/actions/worflows/test.yml/.svg?branch=master />
+  <a href=https://github.com/funzin/ImgConverter/actions/workflows/test.yml>
+    <img src=https://github.com/funzin/ImgConverter/actions/workflows/test.yml/badge.svg />
   </a>
   <a href=https://developer.mozilla.org/ja/docs/Web/JavaScript>
     <img src="http://img.shields.io/badge/javascript-yellow.svg?style=flat" alt="Language" />
