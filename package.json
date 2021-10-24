@@ -15,7 +15,7 @@
     "karma-html2js-preprocessor": "^1.1.0"
   },
   "scripts": {
-    "test": "./node_modules/karma/bin/karma start --single-run --browsers Chrome",
+    "test": "./node_modules/karma/bin/karma start --single-run --browsers ChromeHeadless",
     "debug_test": "./node_modules/karma/bin/karma start --browsers Chrome",
     "codecov": "codecov"
   },
