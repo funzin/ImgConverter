@@ -22,9 +22,6 @@
   <a href=https://codecov.io/gh/funzin/ImgConverter>
     <img src=https://codecov.io/gh/funzin/ImgConverter/branch/master/graph/badge.svg />
   </a>
-  <a href="https://codeclimate.com/github/funzin/ImgConverter/maintainability">
-    <img src="https://api.codeclimate.com/v1/badges/81d980e5e11a3be3a9c6/maintainability" />
-  </a>
 </p>
 
 ## Overview
