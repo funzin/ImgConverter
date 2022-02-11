@@ -7,7 +7,7 @@
     "async": "^3.2.1",
     "codecov": "^3.7.1",
     "jasmine-core": "^3.5.0",
-    "karma": "^6.3.5",
+    "karma": "^6.3.14",
     "karma-chrome-launcher": "^3.1.0",
     "karma-coverage": "^2.0.3",
     "karma-jasmine": "^3.1.1",
