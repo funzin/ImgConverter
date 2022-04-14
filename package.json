@@ -4,7 +4,7 @@
   "description": "ImgConverter converts from image of markdown notation to to img tag",
   "main": "karma.conf.js",
   "dependencies": {
-    "async": "^3.2.1",
+    "async": "^3.2.2",
     "codecov": "^3.7.1",
     "jasmine-core": "^3.5.0",
     "karma": "^6.3.16",
