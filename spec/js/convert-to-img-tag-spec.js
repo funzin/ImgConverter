@@ -349,5 +349,21 @@ describe('convertToImgTag regex edge cases (characterization)', function () {
       expect(result).toEqual('<img src=https://a.com/foo(bar).png >')
     })
   })
+
+  describe('when the URL path nests parentheses', function () {
+    it('keeps the full URL through the closing ) of the markdown', function () {
+      var text = '![x](https://a.com/foo(bar(baz)).png)'
+      var result = convertToImgTag(text, '')
+      expect(result).toEqual('<img src=https://a.com/foo(bar(baz)).png >')
+    })
+  })
+
+  describe('when the destination has an unmatched opening parenthesis', function () {
+    it('does not convert and does not return a truncated src', function () {
+      var text = '![x](https://a.com/foo(bar.png)'
+      var result = convertToImgTag(text, '')
+      expect(result).toBe(null)
+    })
+  })
 })
 
