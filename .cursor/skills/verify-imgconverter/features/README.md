@@ -31,5 +31,5 @@ Each feature file uses H1 plus four H2 sections: `Sub-features`, `How to get to 
 ## Features
 
 - [Convert markdown images in textarea](./convert-markdown-images.md) — full-text conversion with default width on the fixture page.
-- [Convert only selected markdown](./convert-selection-only.md) — selection-scoped replacement (manual / future harness).
-- [Options default width and height](./options-default-size.md) — options page storage (manual / future harness).
+- [Convert only selected markdown](./convert-selection-only.md) — selection-scoped replacement.
+- [Options default width and height](./options-default-size.md) — options page storage and convert-time attributes.

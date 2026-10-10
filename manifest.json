@@ -1,25 +1,29 @@
 {
   "name": "ImgConverter",
   "short_name": "ImgConverter",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "ImgConverter converts from image of markdown notation to to img tag",
-  "manifest_version": 2,
+  "manifest_version": 3,
+  "minimum_chrome_version": "88",
   "permissions": [
     "activeTab",
-    "storage"
+    "storage",
+    "scripting"
   ],
   "background": {
-    "scripts": [
-      "src/lib/jquery-3.4.1.min.js",
-      "src/js/background.js"
-    ],
-    "persistant": false
+    "service_worker": "src/js/background.js"
   },
-  "browser_action": {
-    "name": "convert"
+  "action": {
+    "default_title": "convert",
+    "default_icon": {
+      "16": "resource/image/icons/16.png",
+      "48": "resource/image/icons/48.png",
+      "128": "resource/image/icons/128.png"
+    }
   },
   "options_ui": {
-    "page": "src/html/options.html"
+    "page": "src/html/options.html",
+    "open_in_tab": false
   },
   "icons": {
     "16": "resource/image/icons/16.png",
@@ -28,8 +32,11 @@
   },
   "browser_specific_settings": {
     "gecko": {
-      "id": "@imgconverter"
+      "id": "@imgconverter",
+      "strict_min_version": "109.0"
     }
   },
-  "content_security_policy": "script-src 'self'; object-src 'self'"
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'"
+  }
 }

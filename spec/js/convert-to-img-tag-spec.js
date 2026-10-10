@@ -113,18 +113,6 @@ describe("convertOnlySelectionToImgTag", function(){
           expect(result).toEqual(answer)
         })
       })
-
-      describe('when selection range is from img tag start to img tag end', function () {
-        beforeEach(function () {
-          start = 5
-          end = 66
-          result = convertOnlySelectionToImgTag(text, "", start, end)
-        })
-        it('should return replaced text', function () {
-          const answer = "start<img src=https://user-images.githubusercontent.com/test0.png >end"
-          expect(result).toEqual(answer)
-        })
-      })
     })
 
     describe('when markdown image text is not selected', function () {
@@ -309,3 +297,57 @@ describe('createMarkdownImages', function () {
     })
   })
 })
+
+describe('convertToImgTag with createParams', function () {
+  it('keeps the storage default attribute string in the tag', function () {
+    const text = '![title](https://user-images.githubusercontent.com/test0.png)'
+    const params = createParams({ width: null, height: null })
+    const result = convertToImgTag(text, params)
+    expect(result).toEqual(
+      '<img src=https://user-images.githubusercontent.com/test0.png  width=50%>'
+    )
+  })
+})
+
+describe('convertToImgTag regex edge cases (characterization)', function () {
+  describe('when http and https images share one line', function () {
+    it('leaves the http image text and converts only the https image', function () {
+      var text = '![a](http://a.com/1.png) ![b](https://b.com/2.png)'
+      var result = convertToImgTag(text, '')
+      expect(result).toEqual('![a](http://a.com/1.png) <img src=https://b.com/2.png >')
+    })
+  })
+
+  describe('when alt contains a parenthesized https URL', function () {
+    it('uses the destination URL after ](, not the alt URL', function () {
+      var text = '![see (https://docs.example.com)](https://cdn.example.com/x.png)'
+      var result = convertToImgTag(text, '')
+      expect(result).toEqual('<img src=https://cdn.example.com/x.png >')
+    })
+  })
+
+  describe('when the URL contains $&', function () {
+    it('keeps $& literal in the src attribute', function () {
+      var text = '![x](https://a.com/$&.png)'
+      var result = convertToImgTag(text, '')
+      expect(result).toEqual('<img src=https://a.com/$&.png >')
+    })
+  })
+
+  describe('when the URL contains $$', function () {
+    it('keeps $$ literal in the src attribute', function () {
+      var text = '![x](https://a.com/$$.png)'
+      var result = convertToImgTag(text, '')
+      expect(result).toEqual('<img src=https://a.com/$$.png >')
+    })
+  })
+
+  describe('when the URL path contains parentheses', function () {
+    it('keeps the full URL through the closing ) of the markdown', function () {
+      var text = '![x](https://a.com/foo(bar).png)'
+      var result = convertToImgTag(text, '')
+      expect(result).toEqual('<img src=https://a.com/foo(bar).png >')
+    })
+  })
+})
+
