@@ -1,32 +1,31 @@
 # Options default width and height
 
-The user opens the extension options page, sets default `width` and/or `height` strings, saves, and later conversions append those attributes to generated `<img>` tags.
+ユーザーは拡張のオプションページを開き、デフォルトの `width` および/または `height` 文字列を設定して保存する。以降の変換では、生成される `<img>` タグにそれらの属性が付く。
 
 ## Sub-features
 
-- `options-save-width` — width only.
-- `options-save-height` — height only.
-- `options-save-both` — width and height.
-- `options-empty-default` — empty save stores blank fields; conversion falls back to `width=50%` when both empty at convert time.
+- `options-save-width` — width のみ。
+- `options-save-height` — height のみ。
+- `options-save-both` — width と height。
+- `options-empty-default` — 空のまま保存すると空文字が格納され、変換時に両方空なら `width=50%` にフォールバック。
 
 ## How to get to it (user POV)
 
-- Right-click the ImgConverter toolbar icon → **Options**, or open the extension options UI from the browser.
-- Enter values in the **width** and **height** fields.
-- Click **Save**.
+- ImgConverter のツールバーアイコンを右クリック → **Options**、またはブラウザの拡張オプション UI を開く。
+- **width** / **height** 欄に値を入れる。
+- **Save** をクリックする。
 
 ## Driving it with Playwright Chromium
 
-Preconditions:
+前提:
 
-- `control-imgconverter doctor` succeeded (opens `chrome-extension://<id>/src/html/options.html`).
+- `control-imgconverter doctor` が成功している（`chrome-extension://<id>/src/html/options.html` を開く）。
 
-- **Open options.** Navigate to the options URL from `doctor` output.
-- **Set fields.** Fill `#width` / `#height`, click `#save`.
-- **Convert on fixture.** Run a convert drive; expect `createParams` attributes in the `<img>` tag.
-- **Proof (manual / future `drive-options-width`).** Screenshot options page after save; convert on fixture; capture textarea-after showing matching attributes. Karma `spec/js/options-spec.js` and `createParams` tests cover storage wiring with mocks.
+- **自動化:** `control-imgconverter drive-options-width`。オプション URL で `#width` に `200px` を入れ `#save` をクリックし、フィクスチャ上で変換して `width=200px` を証明する。続けて両欄を空にして保存し、デフォルト `width=50%` を再証明する。
+- **証跡:** `$IMGCONVERTER_ARTIFACTS_DIR/options-default-size/` 配下の `options-after-save.png`、`textarea-after-custom.txt`、`textarea-after-default.txt`、`fixture-after.png`、`proof.json`。
+- Karma `spec/js/options-spec.js` と `createParams` テストはモック付きでストレージ配線をカバーする。
 
 ## Gotchas
 
-- Options page uses jQuery and `chrome.storage.sync`; drives must use the extension origin, not the HTTP fixture.
-- Empty save persists `{ width: "", height: "" }`; default `width=50%` applies at conversion time when both are empty.
+- オプションページは jQuery と `chrome.storage.sync` を使う。drive は HTTP フィクスチャではなく拡張オリジンを使う。
+- 空の保存は `{ width: "", height: "" }` を残す。変換時に両方が空ならデフォルト `width=50%` が適用される。
