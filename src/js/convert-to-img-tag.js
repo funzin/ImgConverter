@@ -48,7 +48,7 @@ function convertToImgTag(text, params) {
 
 function createMarkdownImages(text, params) {
   const markdownImageArray = []
-  const markdownImagePattern = /!\[(?:(?!\]\().)*\]\((?<url>https:(?:[^\s()]|\([^\s()]*\))+)\)/gi
+  const markdownImagePattern = /!\[(?:(?!\]\().)*\]\((?<url>https:(?:[^\s()]|\((?:[^\s()]|\([^\s()]*\))*\))+)\)/gi
 
   for (const match of text.matchAll(markdownImagePattern)) {
     const imageURL = match.groups.url
