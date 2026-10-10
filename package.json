@@ -1,7 +1,7 @@
 {
   "name": "imgconverter",
   "version": "0.3.0",
-  "description": "Converts Markdown image syntax to HTML img tags with optional width and height.",
+  "description": "Convert Markdown images to HTML img tags with one click.",
   "main": "karma.conf.js",
   "dependencies": {
     "async": "^3.2.2",

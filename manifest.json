@@ -2,7 +2,7 @@
   "name": "ImgConverter",
   "short_name": "ImgConverter",
   "version": "0.3.0",
-  "description": "Converts Markdown image syntax to HTML img tags with optional width and height.",
+  "description": "Convert Markdown images to HTML img tags with one click.",
   "manifest_version": 3,
   "minimum_chrome_version": "88",
   "permissions": [
