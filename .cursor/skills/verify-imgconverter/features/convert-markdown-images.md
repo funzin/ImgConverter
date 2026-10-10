@@ -1,36 +1,36 @@
 # Convert markdown images in textarea
 
-GitHub 風コメント欄で、markdown 画像構文を含む textarea にフォーカスし、ImgConverter のツールバーアイコンをクリックすると、一致する `![...](https://...)` 行がすべて `<img>` タグになる。オプション未保存時はデフォルトサイズが付く。
+On a GitHub-style comment box, the user focuses a textarea containing markdown image syntax, clicks the ImgConverter toolbar icon, and every matching `![...](https://...)` line becomes an `<img>` tag with default sizing when no options are saved.
 
 ## Sub-features
 
-- `convert-all-default-width` — 選択なし。storage が空のときデフォルト `width=50%`。
-- `convert-all-custom-width` — オプションページで width を保存したあと（options feature 参照）。
-- `convert-multi-image` — 1 つの textarea に複数の markdown 画像。
+- `convert-all-default-width` — no selection; default `width=50%` when storage is empty.
+- `convert-all-custom-width` — after saving width on the options page (see options feature).
+- `convert-multi-image` — multiple markdown images in one textarea.
 
 ## How to get to it (user POV)
 
-- 対応サイト（GitHub、esa、Docbase など）で issue / PR / コメント欄を開く。
-- textarea に `![title](https://...png|jpg|jpeg|gif)` が含まれるよう貼り付けまたは入力する。
-- textarea にフォーカスする。
-- ImgConverter のブラウザツールバーアイコンをクリックする。
+- Open an issue, pull request, or comment field on a supported site (GitHub, esa, Docbase, etc.).
+- Paste or upload content so the textarea includes `![title](https://...png|jpg|jpeg|gif)`.
+- Focus the textarea.
+- Click the ImgConverter browser toolbar icon.
 
 ## Driving it with Playwright Chromium
 
-前提:
+Preconditions:
 
-- この `IMGCONVERTER_RUN_ID` で `control-imgconverter doctor` が成功している。
-- フィクスチャサーバが `http://127.0.0.1:$IMGCONVERTER_FIXTURE_PORT/github-comment.html` を返す。
+- `control-imgconverter doctor` succeeded for this `IMGCONVERTER_RUN_ID`.
+- Fixture server will serve `http://127.0.0.1:$IMGCONVERTER_FIXTURE_PORT/github-comment.html`.
 
-- **フィクスチャを開く。** `control-imgconverter drive-convert-all` を実行。Playwright がフィクスチャ URL を開く。
-- **markdown を入れる。** `#comment` に、通常のテキスト行に囲まれた `![title](https://user-images.githubusercontent.com/test0.png)` を入れる。
-- **フォーカス。** `#comment` にフォーカス（注入スクリプトの `document.activeElement` に必要）。
-- **ツールバー相当の注入。** ヘルパーが service worker から `chrome.scripting.executeScript` で `src/js/markdown-image.js` のあと `src/js/convert-to-img-tag.js` を実行する。
-- **Proof。** `#comment` の値を読む。周囲の行に挟まれたデフォルトタグ ` <img src=https://user-images.githubusercontent.com/test0.png  width=50%> ` を期待。証跡: `$IMGCONVERTER_ARTIFACTS_DIR/convert-markdown-images/` 配下の `textarea-before.txt`、`textarea-after.txt`、`fixture-after.png`、`proof.json`。
+- **Load fixture.** Run `control-imgconverter drive-convert-all`. Playwright opens the fixture URL.
+- **Enter markdown.** Fill `#comment` with text that includes `![title](https://user-images.githubusercontent.com/test0.png)` surrounded by plain text lines.
+- **Focus.** Focus `#comment` (required for `document.activeElement` in injected scripts).
+- **Toolbar-equivalent inject.** The helper runs service-worker `chrome.scripting.executeScript` for `src/js/markdown-image.js` then `src/js/convert-to-img-tag.js`.
+- **Proof.** Read `#comment` value; expect default tag ` <img src=https://user-images.githubusercontent.com/test0.png  width=50%> ` embedded in the surrounding lines. Artifacts: `textarea-before.txt`, `textarea-after.txt`, `fixture-after.png`, `proof.json` under `$IMGCONVERTER_ARTIFACTS_DIR/convert-markdown-images/`.
 
 ## Gotchas
 
-- 本番は `activeTab`。検証用コピーは localhost の `host_permissions` を足す — その manifest をストアに出さない。
-- システム Google Chrome は `--load-extension` を無視することがある。ハーネスは Playwright 同梱の Chromium を使う。
-- ヘッドレスのシステム Chrome は拡張を 0 個読み込むことが多い。Linux では `xvfb-run` 配下の headed Chromium で drive する。
-- `actual` が `width=` 周りの空白だけ違う場合は、`src/js/convert-to-img-tag.js` の `createParams` 出力と比較する。
+- Production uses `activeTab`; the verification copy adds localhost `host_permissions` — do not ship that manifest to the store.
+- System Google Chrome may ignore `--load-extension`; the harness uses Playwright's Chromium build.
+- Headless system Chrome often loads zero extensions; drives use headed Chromium under `xvfb-run` on Linux.
+- If `actual` differs only by spacing around `width=`, compare against `createParams` output in `src/js/convert-to-img-tag.js`.

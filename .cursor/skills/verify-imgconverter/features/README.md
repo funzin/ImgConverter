@@ -1,35 +1,35 @@
-# ImgConverter 検証マップ
+# ImgConverter verification map
 
-ユーザー向け拡張の挙動を検証するためのメンテ対象ソース。drive 前にこの索引を読み、対応する feature ファイルをレシピとして使う。
+Maintained source for verifying user-facing extension behavior. Read this index before driving; use the matching feature file as the recipe.
 
 ## Baseline preconditions
 
-- 依存インストール済み（ユニットテストはリポジトリルートで `npm ci`、drive は `npm install --prefix .cursor/skills/verify-imgconverter/helpers`）。
-- Playwright Chromium 導入済み: `npx --prefix .cursor/skills/verify-imgconverter/helpers playwright install chromium`。
-- 検証 run ごとに一意の `IMGCONVERTER_RUN_ID` を設定する。
-- `IMGCONVERTER_ARTIFACTS_DIR` を設定する（既定 `/opt/cursor/artifacts/imgconverter-verify`）。
-- `control-imgconverter doctor` を実行し `"ok": true` を必須とする。
-- この run で作っていない Chrome プロファイルやパッチ済み拡張ツリーを drive しない。
+- Repo dependencies installed (`npm ci` at repo root for unit tests; `npm install --prefix .cursor/skills/verify-imgconverter/helpers` for drives).
+- Playwright Chromium installed: `npx --prefix .cursor/skills/verify-imgconverter/helpers playwright install chromium`.
+- Set `IMGCONVERTER_RUN_ID` to a unique value per verification run.
+- Set `IMGCONVERTER_ARTIFACTS_DIR` (default `/opt/cursor/artifacts/imgconverter-verify`).
+- Run `control-imgconverter doctor` and require `"ok": true`.
+- Never drive a Chrome profile or patched extension tree you did not create in this run.
 
 ## Driving conventions
 
-- Linux CI で `DISPLAY` 未設定のときに `xvfb-run` が付くよう、ラッパー `helpers/control-imgconverter` を使う。
-- feature ファイルに別指定がなければ GitHub 風フィクスチャから始める。
-- レイアウトセレクタより安定 DOM id（`#comment`、`#width`、`#height`、`#save`）を優先する。
-- 使い捨て状態は `cleanup` で戻す。cleanup 中に証跡を消さない。
+- Use the wrapper `helpers/control-imgconverter` so Linux CI gets `xvfb-run` when `DISPLAY` is unset.
+- Start from the GitHub-style fixture unless a feature file says otherwise.
+- Prefer stable DOM ids (`#comment`, `#width`, `#height`, `#save`) over layout selectors.
+- Restore disposable state via `cleanup`; do not delete proof artifacts during cleanup.
 
 ## Proof and skip reporting
 
-- スクリーンショットだけでなく、変換前の markdown 入力と変換後の textarea 値を残す。
-- `proof.json` に `feature` id とフィクスチャ URL を記録する。
-- feature の入口に届かないときは、コマンドと満たせなかった前提を報告し、別入口でカバーしたと主張しない。
+- Capture markdown input and textarea value after conversion, not only a screenshot.
+- Record `feature` id and fixture URL in `proof.json`.
+- If a feature entry point is unreachable, report the command and unmet precondition; do not claim another entry point covers it.
 
 ## Feature entry contract
 
-各 feature ファイルは H1 に加え、次の 4 つの H2 を使う: `Sub-features`、`How to get to it (user POV)`、`Driving it with Playwright Chromium`、`Gotchas`。
+Each feature file uses H1 plus four H2 sections: `Sub-features`, `How to get to it (user POV)`, `Driving it with Playwright Chromium`, `Gotchas`.
 
 ## Features
 
-- [Convert markdown images in textarea](./convert-markdown-images.md) — フィクスチャ上での全文変換（デフォルト width）。
-- [Convert only selected markdown](./convert-selection-only.md) — 選択範囲だけの置換。
-- [Options default width and height](./options-default-size.md) — オプションページのストレージと変換への反映。
+- [Convert markdown images in textarea](./convert-markdown-images.md) — full-text conversion with default width on the fixture page.
+- [Convert only selected markdown](./convert-selection-only.md) — selection-scoped replacement.
+- [Options default width and height](./options-default-size.md) — options page storage and convert-time attributes.

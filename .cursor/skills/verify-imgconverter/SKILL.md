@@ -1,75 +1,75 @@
 ---
 name: verify-imgconverter
-description: GitHub風 textarea フィクスチャとオプションページ上で ImgConverter（Chrome MV3 拡張）を駆動する。コード変更後に markdown→img 変換やデフォルト width/height の挙動を証明するときに使う。
+description: Drive ImgConverter (Chrome MV3 extension) on a GitHub-style textarea fixture and options page; use when proving markdown-to-img conversion or default width/height behavior after code changes.
 ---
 
 # Verify ImgConverter
 
-ImgConverter はブラウザ拡張です。ユーザーが GitHub（など）の textarea にフォーカスし、ツールバーアイコンをクリックすると、markdown 画像行が `<img>` タグに変わります。もう一つの画面がオプションページ（`chrome.storage.sync` に保存する `width` / `height` のデフォルト）です。
+ImgConverter is a browser extension: the user focuses a textarea on GitHub (or similar), clicks the toolbar icon, and markdown image lines become `<img>` tags. A second surface is the options page (`width` / `height` defaults stored in `chrome.storage.sync`).
 
-ユニットテスト（`npm test`、Karma）は変換ヘルパーをカバーしますが、クリック時の注入パス全体はカバーしません。このスキルは **Playwright Chromium にアンパック拡張を読み込み**、ツールバークリック時に background が走らせるのと同じスクリプト注入を駆動します。
+Unit tests (`npm test`, Karma) cover conversion helpers but not the full inject-on-click path. This skill loads the **unpacked extension in Playwright Chromium** and drives the same script injection the service worker runs on toolbar click.
 
 ## Launch
 
-ワンショットの drive（`doctor`、`drive-*`）は Chrome の起動と後始末を自分で行います。同一セッションで何度も drive する場合は、run id とプロファイルをひとつに固定してください。
+One-shot drives (`doctor`, `drive-*`) launch and tear down Chrome themselves. For repeated drives in one session, keep a single run id and profile.
 
-1. リポジトリルートで、ハーネス依存を一度だけ入れる:
+1. From the repo root, install harness deps once:
 
    ```bash
    npm install --prefix .cursor/skills/verify-imgconverter/helpers
    npx --prefix .cursor/skills/verify-imgconverter/helpers playwright install chromium
    ```
 
-2. 隔離用の run id を設定する（並列エージェント必須）:
+2. Set an isolated run id (required for side-by-side agents):
 
    ```bash
    export IMGCONVERTER_RUN_ID="verify-$(date +%s)-$$"
    export IMGCONVERTER_ARTIFACTS_DIR="/opt/cursor/artifacts/imgconverter-verify"
    ```
 
-3. 任意: フィクスチャ用ポートを固定（既定 `8765`）:
+3. Optional: pin fixture port (default `8765`):
 
    ```bash
    export IMGCONVERTER_FIXTURE_PORT=8765
    ```
 
-4. 下記の drive コマンドはラッパー経由で実行する（Linux で `DISPLAY` 未設定時は `xvfb-run` を使う）:
+4. Run any drive command below via the wrapper (uses `xvfb-run` on Linux when `DISPLAY` is unset):
 
    ```bash
    .cursor/skills/verify-imgconverter/helpers/control-imgconverter doctor
    ```
 
-**Ready when:** `doctor` が `"ok": true` を出し、空でない `extensionId` と、`#save` が載る `optionsUrl` を返す。
+**Ready when:** `doctor` prints `"ok": true` with a non-empty `extensionId` and an `optionsUrl` that loads `#save`.
 
-**Verification scaffolding:** 各 run はリポジトリを `/tmp/imgconverter-ext-$IMGCONVERTER_RUN_ID` にコピーし、ホスト権限 `http://127.0.0.1:$IMGCONVERTER_FIXTURE_PORT/*` を `host_permissions` に足す（本番は実ツールバークリック後の `activeTab` に依存）。cleanup はコピーと Chrome プロファイルを削除する。
+**Verification scaffolding:** each run copies the repo to `/tmp/imgconverter-ext-$IMGCONVERTER_RUN_ID` and adds host permission `http://127.0.0.1:$IMGCONVERTER_FIXTURE_PORT/*` under `host_permissions` so background `executeScript` can reach the local fixture (production relies on `activeTab` after a real toolbar click). Cleanup removes the copy and Chrome profile.
 
-**Teardown:** `.cursor/skills/verify-imgconverter/helpers/control-imgconverter cleanup` — `IMGCONVERTER_RUN_ID` 用のプロファイルとパッチ済み拡張ツリーだけ削除する。プロセス名で Chrome を kill しない。
+**Teardown:** `.cursor/skills/verify-imgconverter/helpers/control-imgconverter cleanup` — removes only the profile and patched extension tree for `IMGCONVERTER_RUN_ID`. Never kill Chrome by process name.
 
 ## Doctor
 
-drive 前の読み取り専用ゲート:
+Read-only gate before driving:
 
 ```bash
 .cursor/skills/verify-imgconverter/helpers/control-imgconverter doctor
 ```
 
-JSON の `"ok": true`、`manifestVersion` `3`、`version` が `manifest.json` と一致、オプションページが `chrome-extension://<extensionId>/src/html/options.html` で開き `#save` があること。
+Require JSON `"ok": true`, `manifestVersion` `3`, `version` matching `manifest.json`, and options page reachable at `chrome-extension://<extensionId>/src/html/options.html` with `#save` present.
 
 ## Drive
 
-ハーネス: **Playwright Chromium**（`helpers/` 経由で同梱 — システム Google Chrome はしばしば `--load-extension` を無視する）。
+Harness: **Playwright Chromium** (bundled via `helpers/` — not system Google Chrome, which often ignores `--load-extension`).
 
-**ツールバークリック相当:** ヘルパーはフィクスチャの textarea にフォーカスし、拡張の service worker から `src/js/background.js` と同じ `chrome.scripting.executeScript` のファイル一覧を実行する（検証用コピーにホスト権限を付与したうえで、action クリックと同等）。
+**Toolbar click path:** the helper focuses the fixture textarea, then runs the same `chrome.scripting.executeScript` file list as `src/js/background.js` from the extension service worker (equivalent to an action click once host permission is granted on the verification copy).
 
-対象の挙動は `.cursor/skills/verify-imgconverter/features/README.md` と各 feature ファイルを読む。
+Read `.cursor/skills/verify-imgconverter/features/README.md` and the feature file for the behavior under test.
 
-| コマンド | Feature map |
+| Command | Feature map |
 |---------|----------------|
 | `drive-convert-all` | [convert-markdown-images](./features/convert-markdown-images.md) |
 | `drive-convert-selection` | [convert-selection-only](./features/convert-selection-only.md) |
 | `drive-options-width` | [options-default-size](./features/options-default-size.md) |
 
-例:
+Example:
 
 ```bash
 .cursor/skills/verify-imgconverter/helpers/control-imgconverter drive-convert-all
@@ -77,46 +77,46 @@ JSON の `"ok": true`、`manifestVersion` `3`、`version` が `manifest.json` �
 
 ## Evidence
 
-証跡は `$IMGCONVERTER_ARTIFACTS_DIR/<feature-id>/` 配下（既定 `/opt/cursor/artifacts/imgconverter-verify/`）。
+Proof artifacts live under `$IMGCONVERTER_ARTIFACTS_DIR/<feature-id>/` (default `/opt/cursor/artifacts/imgconverter-verify/`).
 
-`convert-markdown-images` の場合:
+For `convert-markdown-images`:
 
-- `textarea-before.txt` — 入力 markdown
-- `textarea-after.txt` — 変換後の textarea 値
-- `fixture-after.png` — フィクスチャページのスクリーンショット
-- `proof.json` — `expected` と `actual` の一致
+- `textarea-before.txt` — input markdown
+- `textarea-after.txt` — textarea value after conversion
+- `fixture-after.png` — screenshot of the fixture page
+- `proof.json` — `expected` vs `actual` equality
 
-**Proof standards:** フィクスチャ上のユーザー可視 textarea パスを駆動する。入力と結果の両方を残す。デフォルトの `width=50%` タグ形は `createParams` に合わせる。このスキル起動時は Karma だけのヘルパーを唯一の証明にしない。`npm test` は純粋関数の速い回帰チェックとして残す。
+**Proof standards:** drive the user-visible textarea path on the fixture; capture both action input and resulting value; compare to the default `width=50%` tag shape from `createParams`; do not use Karma-only helpers as the sole proof when this skill is invoked. `npm test` remains a fast regression check for pure functions.
 
 ## Cleanup
 
-成功・失敗のどちらの drive のあとでも:
+After a successful or failed drive:
 
 ```bash
 .cursor/skills/verify-imgconverter/helpers/control-imgconverter cleanup
 ```
 
-cleanup 後も `$IMGCONVERTER_ARTIFACTS_DIR` 配下の証跡が残っていることを確認する。
+Confirm proof files under `$IMGCONVERTER_ARTIFACTS_DIR` still exist after cleanup.
 
 ## Helpers
 
-コマンドはすべて次経由:
+All commands go through:
 
 ```bash
 .cursor/skills/verify-imgconverter/helpers/control-imgconverter <command>
 ```
 
-実装: `helpers/control-imgconverter.mjs`（Node ESM + Playwright）。bash ラッパーは必要時に `xvfb-run` を付ける。
+Implementation: `helpers/control-imgconverter.mjs` (Node ESM + Playwright). The bash wrapper adds `xvfb-run` when needed.
 
-環境変数:
+Environment:
 
-| 変数 | 用途 |
+| Variable | Purpose |
 |----------|---------|
-| `IMGCONVERTER_RUN_ID` | `/tmp/imgconverter-verify-*` と `/tmp/imgconverter-ext-*` を隔離 |
-| `IMGCONVERTER_REPO_ROOT` | アンパック拡張のソース（既定: リポジトリルート） |
-| `IMGCONVERTER_ARTIFACTS_DIR` | 証跡の出力ルート |
-| `IMGCONVERTER_FIXTURE_PORT` | フィクスチャ HTTP サーバのポート |
+| `IMGCONVERTER_RUN_ID` | Isolates `/tmp/imgconverter-verify-*` and `/tmp/imgconverter-ext-*` |
+| `IMGCONVERTER_REPO_ROOT` | Unpacked extension source (default: repo root) |
+| `IMGCONVERTER_ARTIFACTS_DIR` | Proof output root |
+| `IMGCONVERTER_FIXTURE_PORT` | Fixture HTTP server port |
 
 ## Maintenance
 
-ルート・manifest・変換ルールが変わったら `/maintain-verification-skill` で feature map を更新し、各 feature を再証明する。
+When routes, manifest, or conversion rules change, run `/maintain-verification-skill` to refresh the feature map and re-prove each feature.
