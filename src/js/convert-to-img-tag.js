@@ -40,25 +40,25 @@ function convertToImgTag(text, params) {
   if (mdImageArray == null) { return null }
 
   for (const mdImage of mdImageArray) {
-    replacedText = replacedText.replace(mdImage.mdImageText, mdImage.imageTag)
+    replacedText = replacedText.replace(mdImage.mdImageText, () => mdImage.imageTag)
   }
 
   return replacedText
 }
 
 function createMarkdownImages(text, params) {
-  const results = text.match(/\!\[.*?\]\(https:\S+?\)/gmi)
-  if (results == null) { return null }
-
   const markdownImageArray = []
-  for (const mdImageText of results) {
-    const imageURL = mdImageText.match(/\((https:\S+)\)/i)[1]
+  const markdownImagePattern = /!\[(?:(?!\]\().)*\]\((?<url>https:(?:[^\s()]|\([^\s()]*\))+)\)/gi
+
+  for (const match of text.matchAll(markdownImagePattern)) {
+    const imageURL = match.groups.url
     markdownImageArray.push({
       url: imageURL,
-      mdImageText: mdImageText,
+      mdImageText: match[0],
       imageTag: `<img src=${imageURL} ${params}>`,
     })
   }
+  if (markdownImageArray.length == 0) { return null }
   return markdownImageArray
 }
 
