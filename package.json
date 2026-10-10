@@ -1,6 +1,6 @@
 {
   "name": "imgconverter",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "ImgConverter converts from image of markdown notation to to img tag",
   "main": "karma.conf.js",
   "dependencies": {
