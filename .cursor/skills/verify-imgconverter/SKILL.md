@@ -1,13 +1,13 @@
 ---
 name: verify-imgconverter
-description: Drive ImgConverter (Chrome MV2 extension) on a GitHub-style textarea fixture and options page; use when proving markdown-to-img conversion or default width/height behavior after code changes.
+description: Drive ImgConverter (Chrome MV3 extension) on a GitHub-style textarea fixture and options page; use when proving markdown-to-img conversion or default width/height behavior after code changes.
 ---
 
 # Verify ImgConverter
 
 ImgConverter is a browser extension: the user focuses a textarea on GitHub (or similar), clicks the toolbar icon, and markdown image lines become `<img>` tags. A second surface is the options page (`width` / `height` defaults stored in `chrome.storage.sync`).
 
-Unit tests (`npm test`, Karma) cover conversion helpers but not the full inject-on-click path. This skill loads the **unpacked extension in Playwright Chromium** and drives the same script injection the background page runs on toolbar click.
+Unit tests (`npm test`, Karma) cover conversion helpers but not the full inject-on-click path. This skill loads the **unpacked extension in Playwright Chromium** and drives the same script injection the service worker runs on toolbar click.
 
 ## Launch
 
@@ -41,7 +41,7 @@ One-shot drives (`doctor`, `drive-*`) launch and tear down Chrome themselves. Fo
 
 **Ready when:** `doctor` prints `"ok": true` with a non-empty `extensionId` and an `optionsUrl` that loads `#save`.
 
-**Verification scaffolding:** each run copies the repo to `/tmp/imgconverter-ext-$IMGCONVERTER_RUN_ID` and adds host permission `http://127.0.0.1:$IMGCONVERTER_FIXTURE_PORT/*` so background `executeScript` can reach the local fixture (production relies on `activeTab` after a real toolbar click). Cleanup removes the copy and Chrome profile.
+**Verification scaffolding:** each run copies the repo to `/tmp/imgconverter-ext-$IMGCONVERTER_RUN_ID` and adds host permission `http://127.0.0.1:$IMGCONVERTER_FIXTURE_PORT/*` under `host_permissions` so background `executeScript` can reach the local fixture (production relies on `activeTab` after a real toolbar click). Cleanup removes the copy and Chrome profile.
 
 **Teardown:** `.cursor/skills/verify-imgconverter/helpers/control-imgconverter cleanup` — removes only the profile and patched extension tree for `IMGCONVERTER_RUN_ID`. Never kill Chrome by process name.
 
@@ -53,19 +53,21 @@ Read-only gate before driving:
 .cursor/skills/verify-imgconverter/helpers/control-imgconverter doctor
 ```
 
-Require JSON `"ok": true`, `manifestVersion` `2`, `version` matching `manifest.json`, and options page reachable at `chrome-extension://<extensionId>/src/html/options.html` with `#save` present.
+Require JSON `"ok": true`, `manifestVersion` `3`, `version` matching `manifest.json`, and options page reachable at `chrome-extension://<extensionId>/src/html/options.html` with `#save` present.
 
 ## Drive
 
 Harness: **Playwright Chromium** (bundled via `helpers/` — not system Google Chrome, which often ignores `--load-extension`).
 
-**Toolbar click path:** the helper focuses the fixture textarea, then runs the same `chrome.tabs.executeScript` file list as `src/js/background.js` from the extension background page (equivalent to a browser-action click once host permission is granted on the verification copy).
+**Toolbar click path:** the helper focuses the fixture textarea, then runs the same `chrome.scripting.executeScript` file list as `src/js/background.js` from the extension service worker (equivalent to an action click once host permission is granted on the verification copy).
 
 Read `.cursor/skills/verify-imgconverter/features/README.md` and the feature file for the behavior under test.
 
 | Command | Feature map |
 |---------|----------------|
 | `drive-convert-all` | [convert-markdown-images](./features/convert-markdown-images.md) |
+| `drive-convert-selection` | [convert-selection-only](./features/convert-selection-only.md) |
+| `drive-options-width` | [options-default-size](./features/options-default-size.md) |
 
 Example:
 

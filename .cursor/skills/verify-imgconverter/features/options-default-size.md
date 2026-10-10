@@ -21,10 +21,9 @@ Preconditions:
 
 - `control-imgconverter doctor` succeeded (opens `chrome-extension://<id>/src/html/options.html`).
 
-- **Open options.** Navigate to the options URL from `doctor` output.
-- **Set fields.** Fill `#width` / `#height`, click `#save`.
-- **Convert on fixture.** Run a convert drive; expect `createParams` attributes in the `<img>` tag.
-- **Proof (manual / future `drive-options-width`).** Screenshot options page after save; convert on fixture; capture textarea-after showing matching attributes. Karma `spec/js/options-spec.js` and `createParams` tests cover storage wiring with mocks.
+- **Automated:** `control-imgconverter drive-options-width`. On the options URL, fill `#width` with `200px`, click `#save`, convert on the fixture and expect `width=200px`. Then clear both fields, save again, and re-prove default `width=50%`.
+- **Artifacts:** `options-after-save.png`, `textarea-after-custom.txt`, `textarea-after-default.txt`, `fixture-after.png`, `proof.json` under `$IMGCONVERTER_ARTIFACTS_DIR/options-default-size/`.
+- Karma `spec/js/options-spec.js` and `createParams` tests cover storage wiring with mocks.
 
 ## Gotchas
 
