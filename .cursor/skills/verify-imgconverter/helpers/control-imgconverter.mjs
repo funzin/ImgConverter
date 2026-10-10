@@ -149,10 +149,7 @@ async function triggerBrowserAction(context, extensionId) {
 
     await chrome.scripting.executeScript({
       target: { tabId: tab.id },
-      files: [
-        'src/js/markdown-image.js',
-        'src/js/convert-to-img-tag.js',
-      ],
+      files: ['src/js/convert-to-img-tag.js'],
     });
   });
 }

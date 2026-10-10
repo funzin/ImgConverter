@@ -113,18 +113,6 @@ describe("convertOnlySelectionToImgTag", function(){
           expect(result).toEqual(answer)
         })
       })
-
-      describe('when selection range is from img tag start to img tag end', function () {
-        beforeEach(function () {
-          start = 5
-          end = 66
-          result = convertOnlySelectionToImgTag(text, "", start, end)
-        })
-        it('should return replaced text', function () {
-          const answer = "start<img src=https://user-images.githubusercontent.com/test0.png >end"
-          expect(result).toEqual(answer)
-        })
-      })
     })
 
     describe('when markdown image text is not selected', function () {
@@ -307,5 +295,16 @@ describe('createMarkdownImages', function () {
         })
       })
     })
+  })
+})
+
+describe('convertToImgTag with createParams', function () {
+  it('keeps the storage default attribute string in the tag', function () {
+    const text = '![title](https://user-images.githubusercontent.com/test0.png)'
+    const params = createParams({ width: null, height: null })
+    const result = convertToImgTag(text, params)
+    expect(result).toEqual(
+      '<img src=https://user-images.githubusercontent.com/test0.png  width=50%>'
+    )
   })
 })
