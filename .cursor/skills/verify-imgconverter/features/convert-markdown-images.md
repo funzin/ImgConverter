@@ -1,17 +1,17 @@
 # Convert markdown images in textarea
 
-On a GitHub-style comment box, the user focuses a textarea containing markdown image syntax, clicks the ImgConverter toolbar icon, and every matching `![...](https://...)` line becomes an `<img>` tag with default sizing when no options are saved.
+On a GitHub-style comment box, the user focuses a textarea containing markdown image syntax, clicks the ImgConverter toolbar icon, and every matching `![...](https://...)` token becomes an `<img>` tag with default sizing when no options are saved.
 
 ## Sub-features
 
 - `convert-all-default-width` — no selection; default `width=50%` when storage is empty.
 - `convert-all-custom-width` — after saving width on the options page (see options feature).
-- `convert-multi-image` — multiple markdown images in one textarea.
+- `convert-multi-image` — multiple markdown images in one textarea (same `matchAll` path; unit-tested; `drive-convert-all` proves a single image).
 
 ## How to get to it (user POV)
 
-- Open an issue, pull request, or comment field on a supported site (GitHub, esa, Docbase, etc.).
-- Paste or upload content so the textarea includes `![title](https://...png|jpg|jpeg|gif)`.
+- Open a page with a focusable text field (commonly GitHub, esa, Docbase, and similar comment boxes). The extension does not restrict hosts; it converts whatever focused element exposes a string `.value`.
+- Paste or type content that includes `![title](https://...)` markdown image tokens (`https:` URLs only; the matcher does not require a particular file extension).
 - Focus the textarea.
 - Click the ImgConverter browser toolbar icon.
 
@@ -26,7 +26,7 @@ Preconditions:
 - **Enter markdown.** Fill `#comment` with text that includes `![title](https://user-images.githubusercontent.com/test0.png)` surrounded by plain text lines.
 - **Focus.** Focus `#comment` (required for `document.activeElement` in injected scripts).
 - **Toolbar-equivalent inject.** The helper runs service-worker `chrome.scripting.executeScript` for `src/js/convert-to-img-tag.js`.
-- **Proof.** Read `#comment` value; expect default tag ` <img src=https://user-images.githubusercontent.com/test0.png width=50%> ` embedded in the surrounding lines. Artifacts: `textarea-before.txt`, `textarea-after.txt`, `fixture-after.png`, `proof.json` under `$IMGCONVERTER_ARTIFACTS_DIR/convert-markdown-images/`.
+- **Proof.** Read `#comment` value; expect the default tag `<img src=https://user-images.githubusercontent.com/test0.png width=50%>` embedded in the surrounding lines (no padding spaces around the tag; one space before `width` comes from `createParams`). Artifacts: `textarea-before.txt`, `textarea-after.txt`, `fixture-after.png`, `proof.json` under `$IMGCONVERTER_ARTIFACTS_DIR/convert-markdown-images/`.
 
 ## Gotchas
 
