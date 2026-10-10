@@ -3,23 +3,17 @@
   "version": "0.3.0",
   "description": "Convert Markdown images to HTML img tags with one click.",
   "main": "karma.conf.js",
-  "dependencies": {
-    "async": "^3.2.2",
-    "codecov": "^3.7.1",
+  "devDependencies": {
     "jasmine-core": "^3.5.0",
     "karma": "^6.3.16",
     "karma-chrome-launcher": "^3.1.0",
     "karma-coverage": "^2.0.3",
-    "karma-jasmine": "^3.1.1",
-    "os-tmpdir": "^2.0.0"
-  },
-  "devDependencies": {
-    "karma-html2js-preprocessor": "^1.1.0"
+    "karma-html2js-preprocessor": "^1.1.0",
+    "karma-jasmine": "^3.1.1"
   },
   "scripts": {
     "test": "./node_modules/karma/bin/karma start --single-run --browsers ChromeHeadless",
-    "debug_test": "./node_modules/karma/bin/karma start --browsers Chrome",
-    "codecov": "codecov"
+    "debug_test": "./node_modules/karma/bin/karma start --browsers Chrome"
   },
   "repository": {
     "type": "git",
