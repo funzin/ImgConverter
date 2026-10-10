@@ -1,0 +1,16 @@
+{
+  "name": "verify-imgconverter-helpers",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Playwright harness for verify-imgconverter",
+  "type": "module",
+  "scripts": {
+    "postinstall": "playwright install chromium"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "playwright": "^1.49.1"
+  }
+}

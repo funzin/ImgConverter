@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+set -euo pipefail
+DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+if [[ -z "${DISPLAY:-}" ]] && command -v xvfb-run >/dev/null 2>&1; then
+  exec xvfb-run -a node "$DIR/control-imgconverter.mjs" "$@"
+fi
+exec node "$DIR/control-imgconverter.mjs" "$@"
