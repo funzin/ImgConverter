@@ -1,7 +1,7 @@
 {
   "name": "imgconverter",
   "version": "0.3.0",
-  "description": "ImgConverter converts from image of markdown notation to to img tag",
+  "description": "Converts Markdown image syntax to HTML img tags with optional width and height.",
   "main": "karma.conf.js",
   "dependencies": {
     "async": "^3.2.2",
@@ -26,7 +26,7 @@
     "url": "git+https://github.com/funzin/ImgConverter.git"
   },
   "author": "funzin",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/funzin/ImgConverter/issues"
   },
