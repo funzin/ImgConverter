@@ -32,7 +32,7 @@ describe('Storage', function () {
     describe('when no input', function () {
       beforeEach(function () {
         spyObj = spyOn(chrome.storage.sync, "set")
-        $("#save").click()
+        document.getElementById("save").click()
       })
       it('should not save', function () {
         expect(spyObj).toHaveBeenCalledWith({ width: "", height: "" })
@@ -40,9 +40,9 @@ describe('Storage', function () {
     });
     describe('when input width only', function () {
       beforeEach(function () {
-        $("#width").val("200")
+        document.getElementById("width").value = "200"
         spyObj = spyOn(chrome.storage.sync, "set")
-        $("#save").click()
+        document.getElementById("save").click()
       })
       it('should save width', function () {
         expect(spyObj).toHaveBeenCalledWith({ width: "200", height: "" })
@@ -51,9 +51,9 @@ describe('Storage', function () {
   });
   describe('when input height only', function () {
     beforeEach(function () {
-      $("#height").val("200")
+      document.getElementById("height").value = "200"
       spyObj = spyOn(chrome.storage.sync, "set")
-      $("#save").click()
+      document.getElementById("save").click()
     })
     it('should save height', function () {
       expect(spyObj).toHaveBeenCalledWith({ width: "", height: "200" })
@@ -61,10 +61,10 @@ describe('Storage', function () {
   })
   describe('when input width and height', function () {
     beforeEach(function () {
-      $("#width").val("200")
-      $("#height").val("200")
+      document.getElementById("width").value = "200"
+      document.getElementById("height").value = "200"
       spyObj = spyOn(chrome.storage.sync, "set")
-      $("#save").click()
+      document.getElementById("save").click()
     })
     it('should save width and height', function () {
       expect(spyObj).toHaveBeenCalledWith({ width: "200", height: "200" })

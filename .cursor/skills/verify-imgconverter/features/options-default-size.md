@@ -27,5 +27,5 @@ Preconditions:
 
 ## Gotchas
 
-- Options page uses jQuery and `chrome.storage.sync`; drives must use the extension origin, not the HTTP fixture.
+- Options page uses `chrome.storage.sync`; drives must use the extension origin, not the HTTP fixture.
 - Empty save persists `{ width: "", height: "" }`; default `width=50%` applies at conversion time when both are empty.

@@ -1,6 +1,5 @@
 loadStorage()
 
-
 function loadStorage() {
   chrome.storage.sync.get(function (size) {
     setText(size)
@@ -8,20 +7,27 @@ function loadStorage() {
 }
 
 function setText(size) {
-  $("#width").val(size.width);
-  $("#height").val(size.height);
+  const width = document.getElementById('width');
+  const height = document.getElementById('height');
+  if (width) {
+    width.value = size.width == null ? '' : size.width;
+  }
+  if (height) {
+    height.value = size.height == null ? '' : size.height;
+  }
 }
 
-$(document).on('click','#save', function() {
-    saveSize()
-})
+document.addEventListener('click', function (event) {
+  const target = event.target;
+  if (target && target.closest && target.closest('#save')) {
+    saveSize();
+  }
+});
 
 function saveSize() {
-  const width = $("#width").val();
-  const height = $("#height").val();
   const size = {
-    width: width,
-    height: height,
+    width: document.getElementById('width').value,
+    height: document.getElementById('height').value,
   }
   chrome.storage.sync.set(size);
 }
