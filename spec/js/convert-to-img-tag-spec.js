@@ -308,3 +308,46 @@ describe('convertToImgTag with createParams', function () {
     )
   })
 })
+
+describe('convertToImgTag regex edge cases (characterization)', function () {
+  describe('when http and https images share one line', function () {
+    it('leaves the http image text and converts only the https image', function () {
+      var text = '![a](http://a.com/1.png) ![b](https://b.com/2.png)'
+      var result = convertToImgTag(text, '')
+      expect(result).toEqual('![a](http://a.com/1.png) <img src=https://b.com/2.png >')
+    })
+  })
+
+  describe('when alt contains a parenthesized https URL', function () {
+    it('uses the destination URL after ](, not the alt URL', function () {
+      var text = '![see (https://docs.example.com)](https://cdn.example.com/x.png)'
+      var result = convertToImgTag(text, '')
+      expect(result).toEqual('<img src=https://cdn.example.com/x.png >')
+    })
+  })
+
+  describe('when the URL contains $&', function () {
+    it('keeps $& literal in the src attribute', function () {
+      var text = '![x](https://a.com/$&.png)'
+      var result = convertToImgTag(text, '')
+      expect(result).toEqual('<img src=https://a.com/$&.png >')
+    })
+  })
+
+  describe('when the URL contains $$', function () {
+    it('keeps $$ literal in the src attribute', function () {
+      var text = '![x](https://a.com/$$.png)'
+      var result = convertToImgTag(text, '')
+      expect(result).toEqual('<img src=https://a.com/$$.png >')
+    })
+  })
+
+  describe('when the URL path contains parentheses', function () {
+    it('keeps the full URL through the closing ) of the markdown', function () {
+      var text = '![x](https://a.com/foo(bar).png)'
+      var result = convertToImgTag(text, '')
+      expect(result).toEqual('<img src=https://a.com/foo(bar).png >')
+    })
+  })
+})
+
