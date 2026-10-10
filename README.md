@@ -76,7 +76,7 @@ ImgConverter is not limited to specific sites. These sites are tested:
 ## Develop
 
 - JavaScript
-- Node.js 12.x, 14.x, or 16.x (CI)
+- Node.js 22.x or 24.x (CI)
 - npm
 - Karma with Jasmine
 
