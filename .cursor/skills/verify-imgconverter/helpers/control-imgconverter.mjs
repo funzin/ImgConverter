@@ -46,7 +46,10 @@ async function verificationExtensionPath(id) {
   const manifestPath = join(dest, 'manifest.json');
   const manifest = JSON.parse(readFileSync(manifestPath, 'utf8'));
   const hostPerm = `http://127.0.0.1:${env('IMGCONVERTER_FIXTURE_PORT', DEFAULT_PORT)}/*`;
-  manifest.permissions = Array.from(new Set([...(manifest.permissions ?? []), hostPerm]));
+  // MV3 host access belongs in host_permissions (production uses activeTab after a real click).
+  manifest.host_permissions = Array.from(
+    new Set([...(manifest.host_permissions ?? []), hostPerm]),
+  );
   await writeFile(manifestPath, JSON.stringify(manifest, null, 2));
   return dest;
 }
@@ -136,6 +139,7 @@ async function triggerBrowserAction(context, extensionId) {
     throw new Error('No extension background target to dispatch browser action');
   }
   const bg = bgCandidates[0];
+  // Match production MV3 path in src/js/background.js (chrome.scripting.executeScript).
   await bg.evaluate(async () => {
     const tabs = await new Promise((resolveTabs) => {
       chrome.tabs.query({ active: true, currentWindow: true }, resolveTabs);
@@ -143,16 +147,13 @@ async function triggerBrowserAction(context, extensionId) {
     const tab = tabs[0];
     if (!tab?.id) throw new Error('No active tab for browser action');
 
-    const files = ['src/js/markdown-image.js', 'src/js/convert-to-img-tag.js'];
-    for (const file of files) {
-      await new Promise((resolveScript, rejectScript) => {
-        chrome.tabs.executeScript(tab.id, { file }, () => {
-          const err = chrome.runtime.lastError;
-          if (err) rejectScript(new Error(err.message));
-          else resolveScript();
-        });
-      });
-    }
+    await chrome.scripting.executeScript({
+      target: { tabId: tab.id },
+      files: [
+        'src/js/markdown-image.js',
+        'src/js/convert-to-img-tag.js',
+      ],
+    });
   });
 }
 
@@ -240,7 +241,7 @@ async function cmdDoctor() {
 
     const ok =
       manifest.name === 'ImgConverter' &&
-      manifest.manifest_version === 2 &&
+      manifest.manifest_version === 3 &&
       (await page.locator('#save').count()) === 1;
 
     const out = {
@@ -297,6 +298,137 @@ async function cmdDriveConvertAll() {
   });
 }
 
+async function cmdDriveConvertSelection() {
+  const outDir = join(artifactsDir(), 'convert-selection-only');
+  await mkdir(outDir, { recursive: true });
+
+  await withSession(async ({ context, extensionId, port }) => {
+    const page = await context.newPage();
+    const fixtureUrl = `http://127.0.0.1:${port}/github-comment.html`;
+    const md = '![title](https://user-images.githubusercontent.com/test0.png)';
+    const before = `Before text\n${md}\nAfter text`;
+    const selectionStart = before.indexOf(md);
+    const selectionEnd = selectionStart + md.length;
+    const expected =
+      'Before text\n<img src=https://user-images.githubusercontent.com/test0.png  width=50%>\nAfter text';
+
+    await page.goto(fixtureUrl);
+    const textarea = page.locator('#comment');
+    await textarea.fill(before);
+    await textarea.evaluate(
+      (el, range) => {
+        el.focus();
+        el.setSelectionRange(range.start, range.end);
+      },
+      { start: selectionStart, end: selectionEnd },
+    );
+
+    await triggerBrowserAction(context, extensionId);
+    await page.waitForTimeout(500);
+
+    const after = await textarea.inputValue();
+
+    // selection-no-op: non-empty selection over plain text only → no change
+    const noOpBefore = before;
+    await textarea.fill(noOpBefore);
+    await textarea.evaluate((el) => {
+      el.focus();
+      el.setSelectionRange(0, 'Before text'.length);
+    });
+    await triggerBrowserAction(context, extensionId);
+    await page.waitForTimeout(500);
+    const noOpAfter = await textarea.inputValue();
+
+    await writeFile(join(outDir, 'textarea-before.txt'), before, 'utf8');
+    await writeFile(join(outDir, 'textarea-after.txt'), after, 'utf8');
+    await writeFile(join(outDir, 'textarea-noop-after.txt'), noOpAfter, 'utf8');
+    await page.screenshot({ path: join(outDir, 'fixture-after.png'), fullPage: true });
+
+    const proof = {
+      ok: after === expected && noOpAfter === noOpBefore,
+      feature: 'convert-selection-only',
+      expected,
+      actual: after,
+      noOpExpected: noOpBefore,
+      noOpActual: noOpAfter,
+      selectionStart,
+      selectionEnd,
+      fixtureUrl,
+      artifacts: outDir,
+    };
+    await writeFile(join(outDir, 'proof.json'), JSON.stringify(proof, null, 2));
+    console.log(JSON.stringify(proof, null, 2));
+    if (!proof.ok) process.exit(1);
+  });
+}
+
+async function cmdDriveOptionsWidth() {
+  const outDir = join(artifactsDir(), 'options-default-size');
+  await mkdir(outDir, { recursive: true });
+
+  await withSession(async ({ context, extensionId, port }) => {
+    const optionsUrl = `chrome-extension://${extensionId}/src/html/options.html`;
+    const optionsPage = await context.newPage();
+    await optionsPage.goto(optionsUrl, { waitUntil: 'domcontentloaded' });
+    await optionsPage.locator('#width').fill('200px');
+    await optionsPage.locator('#height').fill('');
+    await optionsPage.locator('#save').click();
+    await optionsPage.waitForTimeout(300);
+    await optionsPage.screenshot({ path: join(outDir, 'options-after-save.png'), fullPage: true });
+
+    const fixtureUrl = `http://127.0.0.1:${port}/github-comment.html`;
+    const before =
+      'Before text\n![title](https://user-images.githubusercontent.com/test0.png)\nAfter text';
+    const expectedCustom =
+      'Before text\n<img src=https://user-images.githubusercontent.com/test0.png  width=200px>\nAfter text';
+    const expectedDefault =
+      'Before text\n<img src=https://user-images.githubusercontent.com/test0.png  width=50%>\nAfter text';
+
+    const page = await context.newPage();
+    await page.goto(fixtureUrl);
+    const textarea = page.locator('#comment');
+    await textarea.fill(before);
+    await textarea.focus();
+    await triggerBrowserAction(context, extensionId);
+    await page.waitForTimeout(500);
+    const afterCustom = await textarea.inputValue();
+
+    // Empty both fields → fallback width=50%
+    await optionsPage.bringToFront();
+    await optionsPage.locator('#width').fill('');
+    await optionsPage.locator('#height').fill('');
+    await optionsPage.locator('#save').click();
+    await optionsPage.waitForTimeout(300);
+
+    await page.bringToFront();
+    await textarea.fill(before);
+    await textarea.focus();
+    await triggerBrowserAction(context, extensionId);
+    await page.waitForTimeout(500);
+    const afterDefault = await textarea.inputValue();
+
+    await writeFile(join(outDir, 'textarea-before.txt'), before, 'utf8');
+    await writeFile(join(outDir, 'textarea-after-custom.txt'), afterCustom, 'utf8');
+    await writeFile(join(outDir, 'textarea-after-default.txt'), afterDefault, 'utf8');
+    await page.screenshot({ path: join(outDir, 'fixture-after.png'), fullPage: true });
+
+    const proof = {
+      ok: afterCustom === expectedCustom && afterDefault === expectedDefault,
+      feature: 'options-default-size',
+      expectedCustom,
+      actualCustom: afterCustom,
+      expectedDefault,
+      actualDefault: afterDefault,
+      optionsUrl,
+      fixtureUrl,
+      artifacts: outDir,
+    };
+    await writeFile(join(outDir, 'proof.json'), JSON.stringify(proof, null, 2));
+    console.log(JSON.stringify(proof, null, 2));
+    if (!proof.ok) process.exit(1);
+  });
+}
+
 async function cmdCleanup() {
   const id = env('IMGCONVERTER_RUN_ID', '');
   const run = id || runId();
@@ -314,14 +446,18 @@ const handlers = {
   hold: cmdHold,
   doctor: cmdDoctor,
   'drive-convert-all': cmdDriveConvertAll,
+  'drive-convert-selection': cmdDriveConvertSelection,
+  'drive-options-width': cmdDriveOptionsWidth,
   cleanup: cmdCleanup,
   help: async () => {
     console.log(`Usage: control-imgconverter.mjs <command>
 
 Commands:
-  doctor              Read-only health check (extension id, options page, manifest)
-  drive-convert-all   Drive convert-all on github-comment fixture; write proof artifacts
-  cleanup             Remove disposable Chrome profile for IMGCONVERTER_RUN_ID
+  doctor                   Read-only health check (extension id, options page, manifest)
+  drive-convert-all        Drive convert-all on github-comment fixture; write proof artifacts
+  drive-convert-selection  Drive selection-scoped convert (+ no-op selection); write proof
+  drive-options-width      Save options width then convert; prove custom + empty default
+  cleanup                  Remove disposable Chrome profile for IMGCONVERTER_RUN_ID
 
 Environment:
   IMGCONVERTER_REPO_ROOT       Path to unpacked extension (default: repo root)
