@@ -55,7 +55,7 @@ function createMarkdownImages(text, params) {
     markdownImageArray.push({
       url: imageURL,
       mdImageText: match[0],
-      imageTag: `<img src=${imageURL} ${params}>`,
+      imageTag: `<img src=${imageURL}${params}>`,
     })
   }
   if (markdownImageArray.length == 0) { return null }
