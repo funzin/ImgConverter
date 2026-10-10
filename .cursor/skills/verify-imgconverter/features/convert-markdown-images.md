@@ -25,7 +25,7 @@ Preconditions:
 - **Load fixture.** Run `control-imgconverter drive-convert-all`. Playwright opens the fixture URL.
 - **Enter markdown.** Fill `#comment` with text that includes `![title](https://user-images.githubusercontent.com/test0.png)` surrounded by plain text lines.
 - **Focus.** Focus `#comment` (required for `document.activeElement` in injected scripts).
-- **Toolbar-equivalent inject.** The helper runs service-worker `chrome.scripting.executeScript` for `src/js/markdown-image.js` then `src/js/convert-to-img-tag.js`.
+- **Toolbar-equivalent inject.** The helper runs service-worker `chrome.scripting.executeScript` for `src/js/convert-to-img-tag.js`.
 - **Proof.** Read `#comment` value; expect default tag ` <img src=https://user-images.githubusercontent.com/test0.png  width=50%> ` embedded in the surrounding lines. Artifacts: `textarea-before.txt`, `textarea-after.txt`, `fixture-after.png`, `proof.json` under `$IMGCONVERTER_ARTIFACTS_DIR/convert-markdown-images/`.
 
 ## Gotchas
