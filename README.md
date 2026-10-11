@@ -73,6 +73,10 @@ ImgConverter is not limited to specific sites. These sites are tested:
 - esa
 - DocBase
 
+## Privacy policy
+
+Read the [ImgConverter privacy policy](./docs/privacy.html).
+
 ## Develop
 
 - JavaScript
