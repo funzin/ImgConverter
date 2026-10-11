@@ -89,6 +89,10 @@ npm run debug_test
 
 To report a bug or suggest a change, open an issue in [GitHub Issues](https://github.com/funzin/ImgConverter/issues).
 
+## Privacy
+
+ImgConverter keeps the saved width and height in browser sync storage and reads the focused element's value only on your device. See the [privacy policy](https://github.com/funzin/ImgConverter/blob/master/PRIVACY.md).
+
 ## Author
 
 funzin, nakazawa.fumito@gmail.com
