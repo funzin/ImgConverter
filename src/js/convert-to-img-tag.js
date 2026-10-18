@@ -15,7 +15,11 @@ chrome.storage.sync.get( function (storage) {
   }
 
   if (replacedText != null) {
-    activeTextElement.value = replacedText
+    // Assigning value skips the editor's input handler, so React reverts
+    // the conversion on preview. insertText is an undoable edit.
+    activeTextElement.focus()
+    activeTextElement.select()
+    document.execCommand('insertText', false, replacedText)
   }
  })
 
