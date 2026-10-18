@@ -427,3 +427,89 @@ describe('GitHub user-attachments uploads', function () {
   })
 })
 
+describe('quoted img attributes', function () {
+  const url = 'https://user-images.githubusercontent.com/test.png'
+  const markdown = '![title](' + url + ')'
+
+  it('quotes src, alt, and the default width', function () {
+    expect(convertToImgTag(markdown, createParams({ width: null, height: null }))).toEqual(
+      '<img src="' + url + '" alt="title" width="50%">'
+    )
+  })
+
+  it('keeps and escapes alt text from the markdown image', function () {
+    expect(convertToImgTag('![say "hi" & <b>](' + url + ')', createParams({ width: '200px', height: null }))).toEqual(
+      '<img src="' + url + '" alt="say &quot;hi&quot; &amp; &lt;b&gt;" width="200px">'
+    )
+  })
+
+  it('keeps an empty alt', function () {
+    expect(convertToImgTag('![](' + url + ')', createParams({ width: '50%', height: null }))).toEqual(
+      '<img src="' + url + '" alt="" width="50%">'
+    )
+  })
+
+  it('escapes ampersands and quotes in the URL', function () {
+    const raw = 'https://example.com/a.png?x=1&y=2"z'
+    expect(convertToImgTag('![a](' + raw + ')', createParams({ width: null, height: '10px' }))).toEqual(
+      '<img src="https://example.com/a.png?x=1&amp;y=2&quot;z" alt="a" height="10px">'
+    )
+  })
+
+  it('ignores a stored width that would inject an attribute', function () {
+    expect(convertToImgTag(markdown, createParams({ width: '100 onerror=x', height: null }))).toEqual(
+      '<img src="' + url + '" alt="title" width="50%">'
+    )
+  })
+
+  it('keeps a valid height when the stored width is invalid', function () {
+    expect(convertToImgTag(markdown, createParams({ width: '100 onerror=x', height: '200px' }))).toEqual(
+      '<img src="' + url + '" alt="title" height="200px">'
+    )
+  })
+
+  it('ignores a stored size that contains a space', function () {
+    expect(convertToImgTag(markdown, createParams({ width: '100 px', height: '' }))).toEqual(
+      '<img src="' + url + '" alt="title" width="50%">'
+    )
+  })
+
+  it('ignores a decimal size', function () {
+    expect(convertToImgTag(markdown, createParams({ width: '10.5', height: null }))).toEqual(
+      '<img src="' + url + '" alt="title" width="50%">'
+    )
+  })
+
+  it('quotes a saved percent and a saved pixel height', function () {
+    expect(convertToImgTag(markdown, createParams({ width: '50%', height: '200px' }))).toEqual(
+      '<img src="' + url + '" alt="title" width="50%" height="200px">'
+    )
+  })
+
+  it('keeps a previously saved bare number', function () {
+    expect(convertToImgTag(markdown, createParams({ width: '200', height: null }))).toEqual(
+      '<img src="' + url + '" alt="title" width="200">'
+    )
+  })
+
+  it('accepts an uppercase px suffix from stored settings', function () {
+    expect(convertToImgTag(markdown, createParams({ width: '200PX', height: null }))).toEqual(
+      '<img src="' + url + '" alt="title" width="200px">'
+    )
+  })
+
+  it('keeps the alt from a GitHub upload tag', function () {
+    const upload = '<img width="640" height="131" alt="Screenshot 2026-10-16 125850" src="https://github.com/user-attachments/assets/2346e618-890a-4baf-ab76-b69353fbb68a" />'
+    expect(convertToImgTag(upload, createParams({ width: null, height: null }))).toEqual(
+      '<img src="https://github.com/user-attachments/assets/2346e618-890a-4baf-ab76-b69353fbb68a" alt="Screenshot 2026-10-16 125850" width="50%">'
+    )
+  })
+
+  it('keeps a GitHub alt that was written with an ampersand entity', function () {
+    const upload = '<img width="640" height="131" alt="a&amp;b" src="https://github.com/user-attachments/assets/2346e618-890a-4baf-ab76-b69353fbb68a" />'
+    expect(convertToImgTag(upload, createParams({ width: '50%', height: null }))).toEqual(
+      '<img src="https://github.com/user-attachments/assets/2346e618-890a-4baf-ab76-b69353fbb68a" alt="a&amp;b" width="50%">'
+    )
+  })
+})
+
