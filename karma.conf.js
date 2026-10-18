@@ -5,6 +5,8 @@ module.exports = function(config) {
     basePath: '',
     frameworks: ['jasmine'],
     files: [
+       'node_modules/react/umd/react.development.js',
+       'node_modules/react-dom/umd/react-dom.development.js',
        'spec/js/mock.js',
        'src/html/*.html',
        'src/js/*.js',
