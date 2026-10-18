@@ -1,6 +1,6 @@
 {
   "name": "imgconverter",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "Convert Markdown images to HTML img tags with one click.",
   "main": "karma.conf.js",
   "devDependencies": {
