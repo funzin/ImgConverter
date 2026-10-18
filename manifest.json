@@ -4,13 +4,14 @@
   "version": "0.4.0",
   "description": "Convert Markdown images to HTML img tags with one click.",
   "manifest_version": 3,
-  "minimum_chrome_version": "88",
+  "minimum_chrome_version": "121",
   "permissions": [
     "activeTab",
     "storage",
     "scripting"
   ],
   "background": {
+    "scripts": ["src/js/background.js"],
     "service_worker": "src/js/background.js"
   },
   "action": {

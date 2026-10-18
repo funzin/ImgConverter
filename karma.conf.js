@@ -7,6 +7,7 @@ module.exports = function(config) {
     files: [
        'node_modules/react/umd/react.development.js',
        'node_modules/react-dom/umd/react-dom.development.js',
+       { pattern: 'manifest.json', included: false, served: true },
        'spec/js/mock.js',
        'src/html/*.html',
        'src/js/*.js',
