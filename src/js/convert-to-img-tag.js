@@ -1,5 +1,6 @@
 chrome.storage.sync.get( function (storage) {
   var activeTextElement = document.activeElement
+  if (activeTextElement == null) { return }
   var textAreaStr = activeTextElement.value
   
   if (textAreaStr == undefined) { return }
