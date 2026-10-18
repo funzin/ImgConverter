@@ -24,10 +24,10 @@ ImgConverter is a Chrome and Firefox extension that converts Markdown images to 
 ## Convert Markdown images
 
 1. Install ImgConverter from the [Chrome Web Store](https://chrome.google.com/webstore/detail/imgconverter-for-github/pkgimcoeodgcdfnidhgijpopkfhbcomm) or [Firefox Add-ons](https://addons.mozilla.org/en-US/firefox/addon/imgconverter/).
-2. Click in a text field that contains a Markdown image, such as `![title](https://user-images.githubusercontent.com/test.png)`.
+2. Click in a text field that contains a Markdown image, such as `![title](https://github.com/user-attachments/assets/2346e618-890a-4baf-ab76-b69353fbb68a)`. GitHub also inserts an upload as `<img width="640" height="131" alt="Screenshot 2026-10-16 125850" src="https://github.com/user-attachments/assets/2346e618-890a-4baf-ab76-b69353fbb68a" />`. ImgConverter converts that tag too.
 3. Click the ImgConverter icon in the browser toolbar. If you do not see the icon, open the Extensions menu from the puzzle icon.
 
-ImgConverter replaces each Markdown image in the field with an `<img>` tag.
+ImgConverter replaces each Markdown image in the field, and each GitHub upload tag, with an `<img>` tag.
 
 <img src="resource/gif/not_select.gif" width="70%" alt="All Markdown images in the field become img tags">
 
@@ -48,16 +48,16 @@ ImgConverter uses the saved values for each new `<img>` tag. To return to `width
 
 ## Conversion rules
 
-ImgConverter converts a Markdown image only when its URL starts with `https:`. It copies the URL into the `<img>` tag and drops the alt text.
+ImgConverter converts a Markdown image only when its URL starts with `https:`. It copies the URL into the `<img>` tag and drops the alt text. A GitHub upload tag, `<img width="640" height="131" alt="Screenshot 2026-10-16 125850" src="https://github.com/user-attachments/assets/2346e618-890a-4baf-ab76-b69353fbb68a" />`, becomes the same result. ImgConverter drops that tag's alt text and pixel size.
 
-The size attributes depend on the saved width and height. Each row shows what `![title](https://user-images.githubusercontent.com/test.png)` becomes.
+The size attributes depend on the saved width and height. Each row shows what `![title](https://github.com/user-attachments/assets/2346e618-890a-4baf-ab76-b69353fbb68a)` becomes.
 
 | Saved width | Saved height | Result |
 | --- | --- | --- |
-| Empty | Empty | `<img src=https://user-images.githubusercontent.com/test.png width=50%>` |
-| `200px` | Empty | `<img src=https://user-images.githubusercontent.com/test.png width=200px>` |
-| Empty | `200px` | `<img src=https://user-images.githubusercontent.com/test.png height=200px>` |
-| `200px` | `200px` | `<img src=https://user-images.githubusercontent.com/test.png width=200px height=200px>` |
+| Empty | Empty | `<img src=https://github.com/user-attachments/assets/2346e618-890a-4baf-ab76-b69353fbb68a width=50%>` |
+| `200px` | Empty | `<img src=https://github.com/user-attachments/assets/2346e618-890a-4baf-ab76-b69353fbb68a width=200px>` |
+| Empty | `200px` | `<img src=https://github.com/user-attachments/assets/2346e618-890a-4baf-ab76-b69353fbb68a height=200px>` |
+| `200px` | `200px` | `<img src=https://github.com/user-attachments/assets/2346e618-890a-4baf-ab76-b69353fbb68a width=200px height=200px>` |
 
 ## Tested formats and sites
 

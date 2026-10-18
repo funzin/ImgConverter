@@ -52,16 +52,26 @@ function convertToImgTag(text, params) {
 
 function createMarkdownImages(text, params) {
   const markdownImageArray = []
-  const markdownImagePattern = /!\[(?:(?!\]\().)*\]\((?<url>https:(?:[^\s()]|\((?:[^\s()]|\([^\s()]*\))*\))+)\)/gi
 
-  for (const match of text.matchAll(markdownImagePattern)) {
-    const imageURL = match.groups.url
+  function pushImage(url, sourceText) {
     markdownImageArray.push({
-      url: imageURL,
-      mdImageText: match[0],
-      imageTag: `<img src=${imageURL}${params}>`,
+      url: url,
+      mdImageText: sourceText,
+      imageTag: `<img src=${url}${params}>`,
     })
   }
+
+  const markdownImagePattern = /!\[(?:(?!\]\().)*\]\((?<url>https:(?:[^\s()]|\((?:[^\s()]|\([^\s()]*\))*\))+)\)/gi
+  for (const match of text.matchAll(markdownImagePattern)) {
+    pushImage(match.groups.url, match[0])
+  }
+
+  // GitHub's upload tag. Pixel width and height, then alt, then the asset URL.
+  const githubUploadPattern = /<img width="\d+" height="\d+" alt="[^"]*" src="(?<url>https:\/\/github\.com\/user-attachments\/assets\/[0-9a-fA-F-]+)" \/>/gi
+  for (const match of text.matchAll(githubUploadPattern)) {
+    pushImage(match.groups.url, match[0])
+  }
+
   if (markdownImageArray.length == 0) { return null }
   return markdownImageArray
 }
