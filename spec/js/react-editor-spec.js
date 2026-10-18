@@ -9,7 +9,7 @@ describe('focused React comment editor', function () {
     markdown = '![title](https://user-images.githubusercontent.com/test.png)'
     savedStorage = mockStorageData
     mockStorageData = { width: null, height: null }
-    expected = '<img src=https://user-images.githubusercontent.com/test.png width=50%>'
+    expected = '<img src="https://user-images.githubusercontent.com/test.png" alt="title" width="50%">'
 
     host = document.createElement('div')
     document.body.appendChild(host)

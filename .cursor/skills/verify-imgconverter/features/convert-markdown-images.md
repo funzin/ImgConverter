@@ -26,11 +26,11 @@ Preconditions:
 - **Enter markdown.** Fill `#comment` with text that includes `![title](https://user-images.githubusercontent.com/test0.png)` surrounded by plain text lines.
 - **Focus.** Focus `#comment` (required for `document.activeElement` in injected scripts).
 - **Toolbar-equivalent inject.** The helper runs service-worker `chrome.scripting.executeScript` for `src/js/convert-to-img-tag.js`.
-- **Proof.** Read `#comment` value; expect the default tag `<img src=https://user-images.githubusercontent.com/test0.png width=50%>` embedded in the surrounding lines (no padding spaces around the tag; one space before `width` comes from `createParams`). Artifacts: `textarea-before.txt`, `textarea-after.txt`, `fixture-after.png`, `proof.json` under `$IMGCONVERTER_ARTIFACTS_DIR/convert-markdown-images/`.
+- **Proof.** Read `#comment` value; expect the default tag `<img src="https://user-images.githubusercontent.com/test0.png" alt="title" width="50%">` embedded in the surrounding lines. Attributes are double-quoted. The alt text is `title`. Artifacts: `textarea-before.txt`, `textarea-after.txt`, `fixture-after.png`, `proof.json` under `$IMGCONVERTER_ARTIFACTS_DIR/convert-markdown-images/`.
 
 ## Gotchas
 
 - Production uses `activeTab`; the verification copy adds localhost `host_permissions` — do not ship that manifest to the store.
 - System Google Chrome may ignore `--load-extension`; the harness uses Playwright's Chromium build.
 - Headless system Chrome often loads zero extensions; drives use headed Chromium under `xvfb-run` on Linux.
-- The proof tag has one space before `width`. `createParams` already starts with that space. The template must not add another.
+- The proof tag quotes `src`, `alt`, and `width`. One space separates attributes.

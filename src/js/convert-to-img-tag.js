@@ -50,26 +50,68 @@ function convertToImgTag(text, params) {
   return replacedText
 }
 
+function parseSize(raw) {
+  if (raw == null) return null
+  var text = String(raw).trim()
+  var match = /^(\d+)(px|%)?$/i.exec(text)
+  if (!match) return null
+  return match[1] + (match[2] ? match[2].toLowerCase() : "")
+}
+
+function escapeAttr(value) {
+  return String(value)
+    .replace(/&/g, "&amp;")
+    .replace(/"/g, "&quot;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+}
+
+function decodeAttr(value) {
+  return String(value)
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&quot;/g, '"')
+    .replace(/&amp;/g, "&")
+}
+
+function asSize(params) {
+  if (params == null || params === "") return { width: null, height: null }
+  return {
+    width: params.width || null,
+    height: params.height || null,
+  }
+}
+
+function imageTag(url, alt, size) {
+  var attrs = [
+    'src="' + escapeAttr(url) + '"',
+    'alt="' + escapeAttr(alt) + '"',
+  ]
+  if (size.width) attrs.push('width="' + size.width + '"')
+  if (size.height) attrs.push('height="' + size.height + '"')
+  return "<img " + attrs.join(" ") + ">"
+}
+
 function createMarkdownImages(text, params) {
   const markdownImageArray = []
+  const size = asSize(params)
 
-  function pushImage(url, sourceText) {
+  function pushImage(url, sourceText, alt) {
     markdownImageArray.push({
       url: url,
       mdImageText: sourceText,
-      imageTag: `<img src=${url}${params}>`,
+      imageTag: imageTag(url, alt, size),
     })
   }
 
-  const markdownImagePattern = /!\[(?:(?!\]\().)*\]\((?<url>https:(?:[^\s()]|\((?:[^\s()]|\([^\s()]*\))*\))+)\)/gi
+  const markdownImagePattern = /!\[(?<alt>(?:(?!\]\().)*)\]\((?<url>https:(?:[^\s()]|\((?:[^\s()]|\([^\s()]*\))*\))+)\)/gi
   for (const match of text.matchAll(markdownImagePattern)) {
-    pushImage(match.groups.url, match[0])
+    pushImage(match.groups.url, match[0], match.groups.alt)
   }
 
-  // GitHub's upload tag. Pixel width and height, then alt, then the asset URL.
-  const githubUploadPattern = /<img width="\d+" height="\d+" alt="[^"]*" src="(?<url>https:\/\/github\.com\/user-attachments\/assets\/[0-9a-fA-F-]+)" \/>/gi
+  const githubUploadPattern = /<img width="\d+" height="\d+" alt="(?<alt>[^"]*)" src="(?<url>https:\/\/github\.com\/user-attachments\/assets\/[0-9a-fA-F-]+)" \/>/gi
   for (const match of text.matchAll(githubUploadPattern)) {
-    pushImage(match.groups.url, match[0])
+    pushImage(match.groups.url, match[0], decodeAttr(match.groups.alt))
   }
 
   if (markdownImageArray.length == 0) { return null }
@@ -77,18 +119,10 @@ function createMarkdownImages(text, params) {
 }
 
 function createParams(storage) {
-  let result = ""
-  if (storage.width != null && storage.width != "") {
-    result += ` width=${storage.width}`
+  var width = parseSize(storage.width)
+  var height = parseSize(storage.height)
+  if (width == null && height == null) {
+    width = "50%"
   }
-
-  if (storage.height != null && storage.height != "") {
-    result += ` height=${storage.height}`
-  }
-
-  if (result == "") {
-    result = " width=50%"
-  }
-
-  return result
+  return { width: width, height: height }
 }

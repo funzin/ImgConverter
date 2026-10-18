@@ -112,6 +112,40 @@ describe('Storage', function () {
     })
   })
 
+  describe('when the saved size is not a number with an optional unit', function () {
+    beforeEach(function () {
+      document.getElementById("width").value = "100 onerror=x"
+      document.getElementById("height").value = "200px"
+      spyObj = spyOn(chrome.storage.sync, "set")
+      document.getElementById("save").click()
+    })
+    it('stores an empty width and the valid height', function () {
+      expect(spyObj).toHaveBeenCalledWith({ width: "", height: "200px" })
+      expect(document.getElementById("width").value).toBe("")
+      expect(document.getElementById("height").value).toBe("200px")
+    })
+  })
+
+  describe('when the typed size has surrounding spaces or an uppercase unit', function () {
+    beforeEach(function () {
+      document.getElementById("width").value = " 200PX "
+      document.getElementById("height").value = " 50% "
+      spyObj = spyOn(chrome.storage.sync, "set")
+      document.getElementById("save").click()
+    })
+    it('stores the trimmed lowercase size', function () {
+      expect(spyObj).toHaveBeenCalledWith({ width: "200px", height: "50%" })
+    })
+  })
+
+  describe('when storage holds an invalid width', function () {
+    it('shows an empty width field', function () {
+      setText({ width: "100 onerror=x", height: "80" })
+      expect(document.getElementById("width").value).toBe("")
+      expect(document.getElementById("height").value).toBe("80")
+    })
+  })
+
   describe('when the click lands inside save', function () {
     beforeEach(function () {
       document.getElementById("save").remove()

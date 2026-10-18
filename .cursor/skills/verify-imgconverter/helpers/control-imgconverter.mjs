@@ -275,7 +275,7 @@ async function cmdDriveConvertAll() {
 
     const after = await textarea.inputValue();
     const expected =
-      'Before text\n<img src=https://user-images.githubusercontent.com/test0.png width=50%>\nAfter text';
+      'Before text\n<img src="https://user-images.githubusercontent.com/test0.png" alt="title" width="50%">\nAfter text';
 
     await writeFile(join(outDir, 'textarea-before.txt'), before, 'utf8');
     await writeFile(join(outDir, 'textarea-after.txt'), after, 'utf8');
@@ -307,7 +307,7 @@ async function cmdDriveConvertSelection() {
     const selectionStart = before.indexOf(md);
     const selectionEnd = selectionStart + md.length;
     const expected =
-      'Before text\n<img src=https://user-images.githubusercontent.com/test0.png width=50%>\nAfter text';
+      'Before text\n<img src="https://user-images.githubusercontent.com/test0.png" alt="title" width="50%">\nAfter text';
 
     await page.goto(fixtureUrl);
     const textarea = page.locator('#comment');
@@ -377,9 +377,9 @@ async function cmdDriveOptionsWidth() {
     const before =
       'Before text\n![title](https://user-images.githubusercontent.com/test0.png)\nAfter text';
     const expectedCustom =
-      'Before text\n<img src=https://user-images.githubusercontent.com/test0.png width=200px>\nAfter text';
+      'Before text\n<img src="https://user-images.githubusercontent.com/test0.png" alt="title" width="200px">\nAfter text';
     const expectedDefault =
-      'Before text\n<img src=https://user-images.githubusercontent.com/test0.png width=50%>\nAfter text';
+      'Before text\n<img src="https://user-images.githubusercontent.com/test0.png" alt="title" width="50%">\nAfter text';
 
     const page = await context.newPage();
     await page.goto(fixtureUrl);
