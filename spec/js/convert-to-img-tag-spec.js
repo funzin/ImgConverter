@@ -394,3 +394,36 @@ describe('convertToImgTag regex edge cases (characterization)', function () {
   })
 })
 
+describe('GitHub user-attachments uploads', function () {
+  const upload = '<img width="640" height="131" alt="Screenshot 2026-10-16 125850" src="https://github.com/user-attachments/assets/2346e618-890a-4baf-ab76-b69353fbb68a" />'
+  const url = 'https://github.com/user-attachments/assets/2346e618-890a-4baf-ab76-b69353fbb68a'
+
+  it('replaces the uploaded img tag with the saved size', function () {
+    const params = createParams({ width: null, height: null })
+    expect(convertToImgTag('before\n' + upload + '\nafter', params)).toEqual(
+      'before\n<img src=' + url + ' width=50%>\nafter'
+    )
+  })
+
+  it('replaces a markdown user-attachments image', function () {
+    const markdown = '![grafik](' + url + ')'
+    expect(convertToImgTag(markdown, ' width=50%')).toEqual(
+      '<img src=' + url + ' width=50%>'
+    )
+  })
+
+  it('replaces two uploaded img tags in one comment', function () {
+    const second = '<img width="66" height="66" alt="飙泪笑" src="https://github.com/user-attachments/assets/74e6965a-5bd0-4a41-89fd-5d50a9f20af2" />'
+    const text = upload + '\n' + second
+    const params = createParams({ width: '200px', height: null })
+    expect(convertToImgTag(text, params)).toEqual(
+      '<img src=' + url + ' width=200px>\n<img src=https://github.com/user-attachments/assets/74e6965a-5bd0-4a41-89fd-5d50a9f20af2 width=200px>'
+    )
+  })
+
+  it('leaves an img tag that already has a chosen width', function () {
+    const resized = '<img src="' + url + '" width="300">'
+    expect(convertToImgTag(resized, ' width=50%')).toBe(null)
+  })
+})
+
