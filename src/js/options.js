@@ -6,14 +6,24 @@ function loadStorage() {
   })
 }
 
+function acceptedSize(raw) {
+  if (raw == null) return null
+  var text = String(raw).trim()
+  var match = /^(\d+)(px|%)?$/i.exec(text)
+  if (!match) return null
+  return match[1] + (match[2] ? match[2].toLowerCase() : "")
+}
+
 function setText(size) {
   const width = document.getElementById('width');
   const height = document.getElementById('height');
   if (width) {
-    width.value = size.width == null ? '' : size.width;
+    var parsedWidth = acceptedSize(size.width)
+    width.value = parsedWidth == null ? '' : parsedWidth
   }
   if (height) {
-    height.value = size.height == null ? '' : size.height;
+    var parsedHeight = acceptedSize(size.height)
+    height.value = parsedHeight == null ? '' : parsedHeight
   }
 }
 
@@ -26,8 +36,9 @@ document.addEventListener('click', function (event) {
 
 function saveSize() {
   const size = {
-    width: document.getElementById('width').value,
-    height: document.getElementById('height').value,
+    width: acceptedSize(document.getElementById('width').value) || "",
+    height: acceptedSize(document.getElementById('height').value) || "",
   }
-  chrome.storage.sync.set(size);
+  chrome.storage.sync.set(size)
+  setText(size)
 }

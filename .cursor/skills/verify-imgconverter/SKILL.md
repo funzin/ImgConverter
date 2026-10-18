@@ -86,7 +86,7 @@ For `convert-markdown-images`:
 - `fixture-after.png` — screenshot of the fixture page
 - `proof.json` — `expected` vs `actual` equality
 
-**Proof standards:** drive the user-visible textarea path on the fixture; capture both action input and resulting value; compare to the default `width=50%` tag shape from `createParams`; do not use Karma-only helpers as the sole proof when this skill is invoked. `npm test` remains a fast regression check for pure functions.
+**Proof standards:** drive the user-visible textarea path on the fixture; capture both action input and resulting value; compare to the default quoted tag `<img src="https://user-images.githubusercontent.com/test0.png" alt="title" width="50%">`; do not use Karma-only helpers as the sole proof when this skill is invoked. `npm test` remains a fast regression check for pure functions.
 
 ## Cleanup
 

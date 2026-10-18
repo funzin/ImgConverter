@@ -10,8 +10,8 @@ describe("convertToImgTag", function(){
       result = convertToImgTag(text, "")
     })
     it('should return replaced text', function () {
-      text = "hogehoge<img src=https://user-images.githubusercontent.com/test0.png>\n \
-              hogehoge<img src=https://img.esa.io/uploads/production/pictures/image/test1.png>"
+      text = "hogehoge<img src=\"https://user-images.githubusercontent.com/test0.png\" alt=\"title\">\n \
+              hogehoge<img src=\"https://img.esa.io/uploads/production/pictures/image/test1.png\" alt=\"title\">"
       expect(result).toEqual(text)
     })
   }) 
@@ -23,8 +23,8 @@ describe("convertToImgTag", function(){
       result = convertToImgTag(text, "")
     })
     it('should return replaced text', function () {
-      text = "hogehoge<img src=https://user-images.githubusercontent.com/test0.png>\n \
-              hogehoge<img src=https://img.esa.io/uploads/production/pictures/image/test1.png>"
+      text = "hogehoge<img src=\"https://user-images.githubusercontent.com/test0.png\" alt=\"hello world\">\n \
+              hogehoge<img src=\"https://img.esa.io/uploads/production/pictures/image/test1.png\" alt=\"hello world\">"
       expect(result).toEqual(text)
     })
   }) 
@@ -36,8 +36,8 @@ describe("convertToImgTag", function(){
       result = convertToImgTag(text, "")
     })
     it('should return replaced text', function () {
-      text = "hogehoge<img src=https://user-images.githubusercontent.com/test0.png>\n \
-              hogehoge<img src=https://img.esa.io/uploads/production/pictures/image/test1.png>"
+      text = "hogehoge<img src=\"https://user-images.githubusercontent.com/test0.png\" alt=\"Img from iOS (1)\">\n \
+              hogehoge<img src=\"https://img.esa.io/uploads/production/pictures/image/test1.png\" alt=\"Img from iOS (2)\">"
       expect(result).toEqual(text)
     })
   }) 
@@ -59,8 +59,8 @@ describe("convertToImgTag", function(){
       result = convertToImgTag(text, "")
     })
     it('should return replaced text', function () {
-      text = "hogehoge<img src=https://user-images.githubusercontent.com/test0>\n \
-              hogehoge<img src=https://img.esa.io/uploads/production/pictures/image/test1>"
+      text = "hogehoge<img src=\"https://user-images.githubusercontent.com/test0\" alt=\"title\">\n \
+              hogehoge<img src=\"https://img.esa.io/uploads/production/pictures/image/test1\" alt=\"title\">"
       expect(result).toEqual(text)
     })
   }) 
@@ -85,7 +85,7 @@ describe("convertOnlySelectionToImgTag", function(){
           result = convertOnlySelectionToImgTag(text, "", start, end)
         })
         it('should return replaced text', function () {
-          const answer = "start<img src=https://user-images.githubusercontent.com/test0.png>end"
+          const answer = "start<img src=\"https://user-images.githubusercontent.com/test0.png\" alt=\"title\">end"
           expect(result).toEqual(answer)
         })
       })
@@ -97,7 +97,7 @@ describe("convertOnlySelectionToImgTag", function(){
           result = convertOnlySelectionToImgTag(text, "", start, end)
         })
         it('should return replaced text', function () {
-          const answer = "start<img src=https://user-images.githubusercontent.com/test0.png>end"
+          const answer = "start<img src=\"https://user-images.githubusercontent.com/test0.png\" alt=\"title\">end"
           expect(result).toEqual(answer)
         })
       })
@@ -109,7 +109,7 @@ describe("convertOnlySelectionToImgTag", function(){
           result = convertOnlySelectionToImgTag(text, "", start, end)
         })
         it('should return replaced text', function () {
-          const answer = "start<img src=https://user-images.githubusercontent.com/test0.png>end"
+          const answer = "start<img src=\"https://user-images.githubusercontent.com/test0.png\" alt=\"title\">end"
           expect(result).toEqual(answer)
         })
       })
@@ -141,7 +141,9 @@ describe('createParams', function () {
       result = createParams(storage)
     })
     it('should return width', function () {
-      expect(result).toBe(" width=50%")
+      expect(convertToImgTag('![title](https://user-images.githubusercontent.com/test.png)', result)).toEqual(
+        '<img src="https://user-images.githubusercontent.com/test.png" alt="title" width="50%">'
+      )
     })
   })
 
@@ -154,7 +156,9 @@ describe('createParams', function () {
       result = createParams(storage)
     })
     it('should return width', function () {
-      expect(result).toBe(" width=200px")
+      expect(convertToImgTag('![title](https://user-images.githubusercontent.com/test.png)', result)).toEqual(
+        '<img src="https://user-images.githubusercontent.com/test.png" alt="title" width="200px">'
+      )
     })
 
   })
@@ -167,7 +171,9 @@ describe('createParams', function () {
       result = createParams(storage)
     })
     it('should return height', function () {
-      expect(result).toBe(" height=200px")
+      expect(convertToImgTag('![title](https://user-images.githubusercontent.com/test.png)', result)).toEqual(
+        '<img src="https://user-images.githubusercontent.com/test.png" alt="title" height="200px">'
+      )
     })
   })
   describe('when storage have width and height', function () {
@@ -179,7 +185,9 @@ describe('createParams', function () {
       result = createParams(storage)
     })
     it('should return width and height', function () {
-      expect(result).toBe(" width=200px height=300px")
+      expect(convertToImgTag('![title](https://user-images.githubusercontent.com/test.png)', result)).toEqual(
+        '<img src="https://user-images.githubusercontent.com/test.png" alt="title" width="200px" height="300px">'
+      )
     })
 
   })
@@ -222,7 +230,7 @@ describe('createMarkdownImages', function () {
 
       result.forEach((markdownImage, index) => {
         expect(markdownImage.url).toEqual(`https://user-images.githubusercontent.com/test${index}.${extensions[index]}`)
-        expect(markdownImage.imageTag).toEqual(`<img src=https://user-images.githubusercontent.com/test${index}.${extensions[index]}>`)
+        expect(markdownImage.imageTag).toEqual(`<img src="https://user-images.githubusercontent.com/test${index}.${extensions[index]}" alt="title">`)
         expect(markdownImage.mdImageText).toEqual(`![title](https://user-images.githubusercontent.com/test${index}.${extensions[index]})`)
       })
     })
@@ -235,7 +243,7 @@ describe('createMarkdownImages', function () {
     it('should match one md image ', function () {
       let markdownImage = result[0]
       let imageURL = "https://user-images.githubusercontent.com/test"
-      let imageTag = "<img src=https://user-images.githubusercontent.com/test>"
+      let imageTag = '<img src="https://user-images.githubusercontent.com/test" alt="title">'
       let mdImageText = "![title](https://user-images.githubusercontent.com/test)"
 
       expect(result.length).toEqual(1)
@@ -253,7 +261,7 @@ describe('createMarkdownImages', function () {
       it('should match one md image ', function () {
         let markdownImage = result[0]
         let imageURL = "https://user-images.githubusercontent.com/test1.png"
-        let imageTag = "<img src=https://user-images.githubusercontent.com/test1.png>"
+        let imageTag = '<img src="https://user-images.githubusercontent.com/test1.png" alt="title">'
         let mdImageText = "![title](https://user-images.githubusercontent.com/test1.png)"
 
         expect(result.length).toEqual(1)
@@ -274,7 +282,7 @@ describe('createMarkdownImages', function () {
 
         result.forEach((markdownImage, index) => {
           expect(markdownImage.url).toEqual(`https://user-images.githubusercontent.com/test${index}.png`)
-          expect(markdownImage.imageTag).toEqual(`<img src=https://user-images.githubusercontent.com/test${index}.png>`)
+          expect(markdownImage.imageTag).toEqual(`<img src="https://user-images.githubusercontent.com/test${index}.png" alt="title">`)
           expect(markdownImage.mdImageText).toEqual(`![title](https://user-images.githubusercontent.com/test${index}.png)`)
         })
       })
@@ -290,7 +298,7 @@ describe('createMarkdownImages', function () {
 
         result.forEach((markdownImage, index) => {
           expect(markdownImage.url).toEqual(`https://user-images.githubusercontent.com/test${index}.png`)
-          expect(markdownImage.imageTag).toEqual(`<img src=https://user-images.githubusercontent.com/test${index}.png>`)
+          expect(markdownImage.imageTag).toEqual(`<img src="https://user-images.githubusercontent.com/test${index}.png" alt="title">`)
           expect(markdownImage.mdImageText).toEqual(`![title](https://user-images.githubusercontent.com/test${index}.png)`)
         })
       })
@@ -301,37 +309,37 @@ describe('createMarkdownImages', function () {
 describe('convertToImgTag tag spacing', function () {
   const markdown = '![title](https://user-images.githubusercontent.com/test.png)'
 
-  it('emits no space before > when params is empty', function () {
+  it('emits no size when params is empty', function () {
     expect(convertToImgTag(markdown, '')).toEqual(
-      '<img src=https://user-images.githubusercontent.com/test.png>'
+      '<img src="https://user-images.githubusercontent.com/test.png" alt="title">'
     )
   })
 
-  it('puts one space before the default width', function () {
+  it('quotes the default width', function () {
     const params = createParams({ width: null, height: null })
     expect(convertToImgTag(markdown, params)).toEqual(
-      '<img src=https://user-images.githubusercontent.com/test.png width=50%>'
+      '<img src="https://user-images.githubusercontent.com/test.png" alt="title" width="50%">'
     )
   })
 
-  it('puts one space before a saved width', function () {
+  it('quotes a saved width', function () {
     const params = createParams({ width: '200px', height: null })
     expect(convertToImgTag(markdown, params)).toEqual(
-      '<img src=https://user-images.githubusercontent.com/test.png width=200px>'
+      '<img src="https://user-images.githubusercontent.com/test.png" alt="title" width="200px">'
     )
   })
 
-  it('puts one space before a saved height', function () {
+  it('quotes a saved height', function () {
     const params = createParams({ width: null, height: '200px' })
     expect(convertToImgTag(markdown, params)).toEqual(
-      '<img src=https://user-images.githubusercontent.com/test.png height=200px>'
+      '<img src="https://user-images.githubusercontent.com/test.png" alt="title" height="200px">'
     )
   })
 
-  it('puts one space before saved width and height', function () {
+  it('quotes saved width and height', function () {
     const params = createParams({ width: '200px', height: '200px' })
     expect(convertToImgTag(markdown, params)).toEqual(
-      '<img src=https://user-images.githubusercontent.com/test.png width=200px height=200px>'
+      '<img src="https://user-images.githubusercontent.com/test.png" alt="title" width="200px" height="200px">'
     )
   })
 })
@@ -341,7 +349,7 @@ describe('convertToImgTag regex edge cases (characterization)', function () {
     it('leaves the http image text and converts only the https image', function () {
       var text = '![a](http://a.com/1.png) ![b](https://b.com/2.png)'
       var result = convertToImgTag(text, '')
-      expect(result).toEqual('![a](http://a.com/1.png) <img src=https://b.com/2.png>')
+      expect(result).toEqual('![a](http://a.com/1.png) <img src="https://b.com/2.png" alt="b">')
     })
   })
 
@@ -349,7 +357,7 @@ describe('convertToImgTag regex edge cases (characterization)', function () {
     it('uses the destination URL after ](, not the alt URL', function () {
       var text = '![see (https://docs.example.com)](https://cdn.example.com/x.png)'
       var result = convertToImgTag(text, '')
-      expect(result).toEqual('<img src=https://cdn.example.com/x.png>')
+      expect(result).toEqual('<img src="https://cdn.example.com/x.png" alt="see (https://docs.example.com)">')
     })
   })
 
@@ -357,7 +365,7 @@ describe('convertToImgTag regex edge cases (characterization)', function () {
     it('keeps $& literal in the src attribute', function () {
       var text = '![x](https://a.com/$&.png)'
       var result = convertToImgTag(text, '')
-      expect(result).toEqual('<img src=https://a.com/$&.png>')
+      expect(result).toEqual('<img src="https://a.com/$&amp;.png" alt="x">')
     })
   })
 
@@ -365,7 +373,7 @@ describe('convertToImgTag regex edge cases (characterization)', function () {
     it('keeps $$ literal in the src attribute', function () {
       var text = '![x](https://a.com/$$.png)'
       var result = convertToImgTag(text, '')
-      expect(result).toEqual('<img src=https://a.com/$$.png>')
+      expect(result).toEqual('<img src="https://a.com/$$.png" alt="x">')
     })
   })
 
@@ -373,7 +381,7 @@ describe('convertToImgTag regex edge cases (characterization)', function () {
     it('keeps the full URL through the closing ) of the markdown', function () {
       var text = '![x](https://a.com/foo(bar).png)'
       var result = convertToImgTag(text, '')
-      expect(result).toEqual('<img src=https://a.com/foo(bar).png>')
+      expect(result).toEqual('<img src="https://a.com/foo(bar).png" alt="x">')
     })
   })
 
@@ -381,7 +389,7 @@ describe('convertToImgTag regex edge cases (characterization)', function () {
     it('keeps the full URL through the closing ) of the markdown', function () {
       var text = '![x](https://a.com/foo(bar(baz)).png)'
       var result = convertToImgTag(text, '')
-      expect(result).toEqual('<img src=https://a.com/foo(bar(baz)).png>')
+      expect(result).toEqual('<img src="https://a.com/foo(bar(baz)).png" alt="x">')
     })
   })
 
@@ -401,14 +409,14 @@ describe('GitHub user-attachments uploads', function () {
   it('replaces the uploaded img tag with the saved size', function () {
     const params = createParams({ width: null, height: null })
     expect(convertToImgTag('before\n' + upload + '\nafter', params)).toEqual(
-      'before\n<img src=' + url + ' width=50%>\nafter'
+      'before\n<img src="' + url + '" alt="Screenshot 2026-10-16 125850" width="50%">\nafter'
     )
   })
 
   it('replaces a markdown user-attachments image', function () {
     const markdown = '![grafik](' + url + ')'
-    expect(convertToImgTag(markdown, ' width=50%')).toEqual(
-      '<img src=' + url + ' width=50%>'
+    expect(convertToImgTag(markdown, createParams({ width: null, height: null }))).toEqual(
+      '<img src="' + url + '" alt="grafik" width="50%">'
     )
   })
 
@@ -417,13 +425,13 @@ describe('GitHub user-attachments uploads', function () {
     const text = upload + '\n' + second
     const params = createParams({ width: '200px', height: null })
     expect(convertToImgTag(text, params)).toEqual(
-      '<img src=' + url + ' width=200px>\n<img src=https://github.com/user-attachments/assets/74e6965a-5bd0-4a41-89fd-5d50a9f20af2 width=200px>'
+      '<img src="' + url + '" alt="Screenshot 2026-10-16 125850" width="200px">\n<img src="https://github.com/user-attachments/assets/74e6965a-5bd0-4a41-89fd-5d50a9f20af2" alt="飙泪笑" width="200px">'
     )
   })
 
   it('leaves an img tag that already has a chosen width', function () {
     const resized = '<img src="' + url + '" width="300">'
-    expect(convertToImgTag(resized, ' width=50%')).toBe(null)
+    expect(convertToImgTag(resized, createParams({ width: null, height: null }))).toBe(null)
   })
 })
 

@@ -21,7 +21,7 @@ Preconditions:
 
 - `control-imgconverter doctor` succeeded (opens `chrome-extension://<id>/src/html/options.html`).
 
-- **Automated:** `control-imgconverter drive-options-width`. On the options URL, fill `#width` with `200px`, clear `#height`, click `#save`, convert on the fixture and expect `width=200px`. Then clear both fields, save again, and re-prove default `width=50%`. Height-only and both-set stay on unit tests (`createParams` / `options-spec.js`).
+- **Automated:** `control-imgconverter drive-options-width`. On the options URL, fill `#width` with `200px`, clear `#height`, click `#save`, convert on the fixture and expect `width="200px"`. Then clear both fields, save again, and re-prove default `width="50%"`. Height-only and both-set stay on unit tests (`createParams` / `options-spec.js`).
 - **Artifacts:** `options-after-save.png`, `textarea-before.txt`, `textarea-after-custom.txt`, `textarea-after-default.txt`, `fixture-after.png`, `proof.json` under `$IMGCONVERTER_ARTIFACTS_DIR/options-default-size/`.
 - Karma `spec/js/options-spec.js` covers options save/load with the storage mock; `createParams` cases in `spec/js/convert-to-img-tag-spec.js` cover attribute strings with in-memory objects (not `chrome.storage`).
 
@@ -29,4 +29,4 @@ Preconditions:
 
 - Options page uses `chrome.storage.sync`; drives must use the extension origin, not the HTTP fixture.
 - Empty save persists `{ width: "", height: "" }`; default `width=50%` applies at conversion time when both are empty.
-- Height-only saves produce ` height=<value>` with no `width=50%` fallback.
+- Height-only saves produce a quoted `height` and no default `width`.

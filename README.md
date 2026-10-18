@@ -19,7 +19,7 @@
   </a>
 </p>
 
-ImgConverter is a Chrome and Firefox extension that converts Markdown images to HTML `<img>` tags with one click. Markdown image syntax has no way to set the image size, but an `<img>` tag has `width` and `height` attributes. ImgConverter adds the width and height you save on the options page, or `width=50%` if you save neither.
+ImgConverter is a Chrome and Firefox extension that converts Markdown images to HTML `<img>` tags with one click. Markdown image syntax has no way to set the image size, but an `<img>` tag has `width` and `height` attributes. ImgConverter adds the width and height you save on the options page, or `width="50%"` if you save neither.
 
 ## Convert Markdown images
 
@@ -41,23 +41,23 @@ To convert only some images, select their full Markdown text before you click th
 
 <img src="resource/image/screenshot/right_click.png" width="50%" alt="Options in the ImgConverter right-click menu">
 
-2. Enter a value in the **width** field, the **height** field, or both. Enter only the value, such as `200px` or `50%`.
-3. Click **Save**.
+2. Enter a value in the **width** field, the **height** field, or both. Use a number, optionally followed by `px` or `%`, such as `200px` or `50%`.
+3. Click **Save**. ImgConverter clears a value that is not that shape.
 
-ImgConverter uses the saved values for each new `<img>` tag. To return to `width=50%`, clear both fields and click **Save**.
+ImgConverter uses the saved values for each new `<img>` tag. To return to `width="50%"`, clear both fields and click **Save**.
 
 ## Conversion rules
 
-ImgConverter converts a Markdown image only when its URL starts with `https:`. It copies the URL into the `<img>` tag and drops the alt text. A GitHub upload tag, `<img width="640" height="131" alt="Screenshot 2026-10-16 125850" src="https://github.com/user-attachments/assets/2346e618-890a-4baf-ab76-b69353fbb68a" />`, becomes the same result. ImgConverter drops that tag's alt text and pixel size.
+ImgConverter converts a Markdown image only when its URL starts with `https:`. It copies the URL and the alt text into a quoted `<img>` tag. A GitHub upload tag, `<img width="640" height="131" alt="Screenshot 2026-10-16 125850" src="https://github.com/user-attachments/assets/2346e618-890a-4baf-ab76-b69353fbb68a" />`, becomes the same kind of tag. ImgConverter keeps that tag's alt text and replaces its pixel size with the saved width and height.
 
 The size attributes depend on the saved width and height. Each row shows what `![title](https://github.com/user-attachments/assets/2346e618-890a-4baf-ab76-b69353fbb68a)` becomes.
 
 | Saved width | Saved height | Result |
 | --- | --- | --- |
-| Empty | Empty | `<img src=https://github.com/user-attachments/assets/2346e618-890a-4baf-ab76-b69353fbb68a width=50%>` |
-| `200px` | Empty | `<img src=https://github.com/user-attachments/assets/2346e618-890a-4baf-ab76-b69353fbb68a width=200px>` |
-| Empty | `200px` | `<img src=https://github.com/user-attachments/assets/2346e618-890a-4baf-ab76-b69353fbb68a height=200px>` |
-| `200px` | `200px` | `<img src=https://github.com/user-attachments/assets/2346e618-890a-4baf-ab76-b69353fbb68a width=200px height=200px>` |
+| Empty | Empty | `<img src="https://github.com/user-attachments/assets/2346e618-890a-4baf-ab76-b69353fbb68a" alt="title" width="50%">` |
+| `200px` | Empty | `<img src="https://github.com/user-attachments/assets/2346e618-890a-4baf-ab76-b69353fbb68a" alt="title" width="200px">` |
+| Empty | `200px` | `<img src="https://github.com/user-attachments/assets/2346e618-890a-4baf-ab76-b69353fbb68a" alt="title" height="200px">` |
+| `200px` | `200px` | `<img src="https://github.com/user-attachments/assets/2346e618-890a-4baf-ab76-b69353fbb68a" alt="title" width="200px" height="200px">` |
 
 ## Tested formats and sites
 
