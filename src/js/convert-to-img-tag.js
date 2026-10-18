@@ -109,7 +109,6 @@ function createMarkdownImages(text, params) {
     pushImage(match.groups.url, match[0], match.groups.alt)
   }
 
-  // GitHub's upload tag. Pixel width and height, then alt, then the asset URL.
   const githubUploadPattern = /<img width="\d+" height="\d+" alt="(?<alt>[^"]*)" src="(?<url>https:\/\/github\.com\/user-attachments\/assets\/[0-9a-fA-F-]+)" \/>/gi
   for (const match of text.matchAll(githubUploadPattern)) {
     pushImage(match.groups.url, match[0], decodeAttr(match.groups.alt))
