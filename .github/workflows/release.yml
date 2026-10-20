@@ -28,10 +28,3 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: node scripts/github-release.mjs
-
-      - name: Publish to Chrome Web Store
-        env:
-          CWS_EXTENSION_ID: ${{ secrets.CWS_EXTENSION_ID }}
-          CWS_PUBLISHER_ID: ${{ secrets.CWS_PUBLISHER_ID }}
-          CWS_SERVICE_ACCOUNT_JSON: ${{ secrets.CWS_SERVICE_ACCOUNT_JSON }}
-        run: node scripts/publish-cws.mjs
