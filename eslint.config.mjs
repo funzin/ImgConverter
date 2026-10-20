@@ -7,7 +7,16 @@ const sharedGlobals = {
 }
 
 export default [
-  { ignores: ['node_modules/**', 'coverage/**', '.cursor/**'] },
+  {
+    ignores: [
+      'node_modules/**',
+      'coverage/**',
+      '.cursor/**',
+      'test-results/**',
+      'playwright-report/**',
+      'blob-report/**',
+    ],
+  },
   js.configs.recommended,
   {
     files: ['src/**/*.js'],
@@ -18,28 +27,33 @@ export default [
     },
   },
   {
-    files: ['spec/**/*.js'],
+    files: ['spec/js/**/*.js'],
     languageOptions: {
       ecmaVersion: 2022,
-      sourceType: 'script',
+      sourceType: 'commonjs',
       globals: {
         ...sharedGlobals,
+        ...globals.node,
         chrome: 'writable',
         mockStorageData: 'writable',
-        __html__: 'readonly',
         convertToImgTag: 'readonly',
         convertOnlySelectionToImgTag: 'readonly',
         createParams: 'readonly',
         createMarkdownImages: 'readonly',
         loadStorage: 'readonly',
         setText: 'writable',
-        describe: 'readonly',
-        it: 'readonly',
-        beforeEach: 'readonly',
-        afterEach: 'readonly',
-        expect: 'readonly',
-        spyOn: 'readonly',
-        jasmine: 'readonly',
+        self: 'readonly',
+      },
+    },
+  },
+  {
+    files: ['spec/helpers/**/*.js', 'spec/browser/**/*.js', 'playwright.config.js'],
+    languageOptions: {
+      ecmaVersion: 2022,
+      sourceType: 'commonjs',
+      globals: {
+        ...globals.node,
+        ...globals.browser,
         React: 'readonly',
         ReactDOM: 'readonly',
       },
@@ -50,16 +64,6 @@ export default [
     languageOptions: {
       ecmaVersion: 2022,
       sourceType: 'module',
-      globals: {
-        ...globals.node,
-      },
-    },
-  },
-  {
-    files: ['karma.conf.js'],
-    languageOptions: {
-      ecmaVersion: 2022,
-      sourceType: 'commonjs',
       globals: {
         ...globals.node,
       },

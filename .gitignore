@@ -86,6 +86,10 @@ typings/
 # FuseBox cache
 .fusebox/
 
+test-results/
+playwright-report/
+blob-report/
+
 # DynamoDB Local files
 .dynamodb/
 

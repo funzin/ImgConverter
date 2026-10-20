@@ -7,7 +7,7 @@ description: Drive ImgConverter (Chrome MV3 extension) on a GitHub-style textare
 
 ImgConverter is a browser extension: the user focuses a textarea on GitHub (or similar), clicks the toolbar icon, and markdown image lines become `<img>` tags. A second surface is the options page (`width` / `height` defaults stored in `chrome.storage.sync`).
 
-Unit tests (`npm test`, Karma) cover conversion helpers but not the full inject-on-click path. This skill loads the **unpacked extension in Playwright Chromium** and drives the same script injection the service worker runs on toolbar click.
+Unit tests (`npm test`) cover conversion helpers but not the full inject-on-click path. This skill loads the **unpacked extension in Playwright Chromium** and drives the same script injection the service worker runs on toolbar click.
 
 ## Launch
 
@@ -86,7 +86,7 @@ For `convert-markdown-images`:
 - `fixture-after.png` — screenshot of the fixture page
 - `proof.json` — `expected` vs `actual` equality
 
-**Proof standards:** drive the user-visible textarea path on the fixture; capture both action input and resulting value; compare to the default quoted tag `<img src="https://user-images.githubusercontent.com/test0.png" alt="title" width="50%">`; do not use Karma-only helpers as the sole proof when this skill is invoked. `npm test` remains a fast regression check for pure functions.
+**Proof standards:** drive the user-visible textarea path on the fixture; capture both action input and resulting value; compare to the default quoted tag `<img src="https://user-images.githubusercontent.com/test0.png" alt="title" width="50%">`; do not use the unit tests as the sole proof when this skill is invoked. `npm test` remains a fast regression check for pure functions.
 
 ## Cleanup
 

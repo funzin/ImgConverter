@@ -1,13 +1,21 @@
-describe('Storage', function () {
+const { describe, it, beforeEach, afterEach, mock } = require('node:test')
+const { installDom, loadScript, expect, spyOn, restoreSpies, readOptionsHtml } = require('../helpers/browser')
+
+installDom()
+loadScript('src/js/options.js')
+const optionsHtml = readOptionsHtml()
+
+describe('Storage', { concurrency: false }, function () {
   var spyObj
+  afterEach(restoreSpies)
   beforeEach(function () {
-    document.body.innerHTML = __html__['src/html/options.html'];
+    document.body.innerHTML = optionsHtml;
   })
-  describe('when initialize', function () {
+  describe('when initialize', { concurrency: false }, function () {
     beforeEach(function () {
       spyObj = spyOn(self, "setText")
     })
-    describe('when storage has save data', function () {
+    describe('when storage has save data', { concurrency: false }, function () {
       beforeEach(function () {
         mockStorageData = { width: "10", height: "100" }
         loadStorage()
@@ -17,7 +25,7 @@ describe('Storage', function () {
       });
     });
 
-    describe('when storage does not have save data', function () {
+    describe('when storage does not have save data', { concurrency: false }, function () {
       beforeEach(function () {
         mockStorageData = {}
         loadStorage()
@@ -28,8 +36,8 @@ describe('Storage', function () {
     });
   });
 
-  describe('when tap save button', function () {
-    describe('when no input', function () {
+  describe('when tap save button', { concurrency: false }, function () {
+    describe('when no input', { concurrency: false }, function () {
       beforeEach(function () {
         spyObj = spyOn(chrome.storage.sync, "set")
         document.getElementById("save").click()
@@ -38,7 +46,7 @@ describe('Storage', function () {
         expect(spyObj).toHaveBeenCalledWith({ width: "", height: "" })
       });
     });
-    describe('when input width only', function () {
+    describe('when input width only', { concurrency: false }, function () {
       beforeEach(function () {
         document.getElementById("width").value = "200"
         spyObj = spyOn(chrome.storage.sync, "set")
@@ -49,7 +57,7 @@ describe('Storage', function () {
       });
     });
   });
-  describe('when input height only', function () {
+  describe('when input height only', { concurrency: false }, function () {
     beforeEach(function () {
       document.getElementById("height").value = "200"
       spyObj = spyOn(chrome.storage.sync, "set")
@@ -59,7 +67,7 @@ describe('Storage', function () {
       expect(spyObj).toHaveBeenCalledWith({ width: "", height: "200" })
     })
   })
-  describe('when input width and height', function () {
+  describe('when input width and height', { concurrency: false }, function () {
     beforeEach(function () {
       document.getElementById("width").value = "200"
       document.getElementById("height").value = "200"
@@ -71,7 +79,7 @@ describe('Storage', function () {
     });
   })
 
-  describe('when storage text is applied to the fields', function () {
+  describe('when storage text is applied to the fields', { concurrency: false }, function () {
     it('should write width and height', function () {
       setText({ width: "10", height: "100" })
       expect(document.getElementById("width").value).toBe("10")
@@ -94,7 +102,7 @@ describe('Storage', function () {
     })
   })
 
-  describe('when the saved size is not a number with an optional unit', function () {
+  describe('when the saved size is not a number with an optional unit', { concurrency: false }, function () {
     beforeEach(function () {
       document.getElementById("width").value = "100 onerror=x"
       document.getElementById("height").value = "200px"
@@ -113,7 +121,7 @@ describe('Storage', function () {
     })
   })
 
-  describe('when both sizes are rejected', function () {
+  describe('when both sizes are rejected', { concurrency: false }, function () {
     beforeEach(function () {
       document.getElementById("width").value = "nope"
       document.getElementById("height").value = "10.5"
@@ -130,9 +138,9 @@ describe('Storage', function () {
     })
   })
 
-  describe('when a valid size is saved', function () {
+  describe('when a valid size is saved', { concurrency: false }, function () {
     it('shows Saved and then clears it', function () {
-      jasmine.clock().install()
+      mock.timers.enable({ apis: ['setTimeout'] })
       try {
         document.getElementById("width").value = "200"
         document.getElementById("height").value = ""
@@ -141,16 +149,16 @@ describe('Storage', function () {
         var status = document.getElementById("status")
         expect(status && status.textContent).toBe("Saved")
         expect(spyObj).toHaveBeenCalledWith({ width: "200", height: "" })
-        jasmine.clock().tick(2000)
+        mock.timers.tick(2000)
         status = document.getElementById("status")
         expect(status && status.textContent).toBe("")
       } finally {
-        jasmine.clock().uninstall()
+        mock.timers.reset()
       }
     })
   })
 
-  describe('when enter submits the form', function () {
+  describe('when enter submits the form', { concurrency: false }, function () {
     it('saves the height', function () {
       document.getElementById("height").value = "50%"
       spyObj = spyOn(chrome.storage.sync, "set")
@@ -162,7 +170,7 @@ describe('Storage', function () {
     })
   })
 
-  describe('when the fields are labeled', function () {
+  describe('when the fields are labeled', { concurrency: false }, function () {
     it('names each field and points at the hint', function () {
       var width = document.getElementById("width")
       var height = document.getElementById("height")
@@ -173,9 +181,9 @@ describe('Storage', function () {
     })
   })
 
-  describe('when the options document is parsed', function () {
+  describe('when the options document is parsed', { concurrency: false }, function () {
     it('loads one deferred options script', function () {
-      var doc = new DOMParser().parseFromString(__html__['src/html/options.html'], 'text/html')
+      var doc = new DOMParser().parseFromString(optionsHtml, 'text/html')
       var scripts = doc.querySelectorAll('script')
       expect(scripts.length).toBe(1)
       expect(scripts[0].getAttribute('src')).toBe('../js/options.js')
@@ -184,7 +192,7 @@ describe('Storage', function () {
     })
   })
 
-  describe('when the typed size has surrounding spaces or an uppercase unit', function () {
+  describe('when the typed size has surrounding spaces or an uppercase unit', { concurrency: false }, function () {
     beforeEach(function () {
       document.getElementById("width").value = " 200PX "
       document.getElementById("height").value = " 50% "
@@ -196,7 +204,7 @@ describe('Storage', function () {
     })
   })
 
-  describe('when storage holds an invalid width', function () {
+  describe('when storage holds an invalid width', { concurrency: false }, function () {
     it('shows an empty width field', function () {
       setText({ width: "100 onerror=x", height: "80" })
       expect(document.getElementById("width").value).toBe("")
