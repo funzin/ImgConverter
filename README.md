@@ -83,7 +83,29 @@ ImgConverter is not limited to specific sites. These sites are tested:
 ```bash
 npm test
 npm run debug_test
+npm run package
 ```
+
+## Release a version
+
+Push a tag `vX.Y.Z` whose numbers match `version` in `manifest.json` and `package.json`. The release workflow runs the tests, builds `dist/ImgConverter-X.Y.Z.zip`, and attaches that zip to a GitHub Release named ImgConverter X.Y.Z. It then uploads the zip to the existing Chrome Web Store item and submits it for review.
+
+`npm run package` builds the same zip. The zip contains `manifest.json`, the files under `src/html` and `src/js`, and the files under `resource/image/icons`.
+
+### Chrome Web Store credentials
+
+The store step calls [Chrome Web Store API v2](https://developer.chrome.com/docs/webstore/using-api) with a [service account](https://developer.chrome.com/docs/webstore/service-accounts). If none of the secrets below are set, the workflow still creates the GitHub Release and prints a notice that the store step was skipped. If only some of them are set, the store step fails.
+
+The Google account that owns the publisher needs 2-step verification. The dashboard accepts one service account.
+
+1. In the [Google Cloud Console](https://console.cloud.google.com/), create or select a project and enable the Chrome Web Store API.
+2. Create a service account and leave its Google Cloud roles empty. Create a JSON key and download the key file.
+3. In the [Developer Dashboard](https://chrome.google.com/webstore/devconsole), open Account and add the service account email under API access.
+4. Copy the publisher ID from Publisher, then Settings.
+5. In this repository, open Settings, then Secrets and variables, then Actions. Add these repository secrets.
+   - `CWS_EXTENSION_ID`. The id in the store URL, `pkgimcoeodgcdfnidhgijpopkfhbcomm`.
+   - `CWS_PUBLISHER_ID`. The publisher ID from the dashboard.
+   - `CWS_SERVICE_ACCOUNT_JSON`. The full text of the JSON key file.
 
 ## Report a problem
 
