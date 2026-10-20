@@ -15,7 +15,8 @@
   },
   "scripts": {
     "test": "./node_modules/karma/bin/karma start --single-run --browsers ChromeHeadless",
-    "debug_test": "./node_modules/karma/bin/karma start --browsers Chrome"
+    "debug_test": "./node_modules/karma/bin/karma start --browsers Chrome",
+    "package": "node scripts/package.mjs"
   },
   "repository": {
     "type": "git",
