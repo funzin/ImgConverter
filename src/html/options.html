@@ -1,28 +1,42 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
   <meta charset="utf-8">
-  <script src="../js/options.js"></script>
+  <title>ImgConverter options</title>
+  <style>
+    label {
+      display: inline-block;
+      min-width: 4.5em;
+    }
+    #size-hint {
+      color: gray;
+    }
+    input[aria-invalid="true"] {
+      outline: 2px solid red;
+    }
+    #status {
+      min-height: 1.2em;
+    }
+    form:has([aria-invalid="true"]) #status {
+      color: red;
+    }
+  </style>
+  <script src="../js/options.js" defer></script>
 </head>
 
 <body>
-  ImgConverter adds the width and height below to each new &lt;img&gt; tag. Enter a number, optionally followed by px or %. Examples are 200px and 50%. Other text is cleared when you click Save. If both fields are empty, ImgConverter adds width="50%".
-  <table>
-    <tr>
-      <td>width: </td>
-      <td><input id="width" type="text"></td>
-    </tr>
-
-    <tr>
-      <td>height: </td>
-      <td><input id="height" type="text"></td>
-    </tr>
-
-  </table>
-  <br>
-
-  <input id="save" type="button" value="Save">
+  <form id="size-form">
+    <p>ImgConverter adds this width and height to each new &lt;img&gt; tag. If both are empty, it adds width="50%".</p>
+    <label for="width">Width</label>
+    <input id="width" type="text" aria-describedby="size-hint">
+    <br>
+    <label for="height">Height</label>
+    <input id="height" type="text" aria-describedby="size-hint">
+    <p id="size-hint">Use digits, optionally followed by px or %, like 200px or 50%.</p>
+    <button id="save" type="submit">Save</button>
+    <p id="status" role="status"></p>
+  </form>
 </body>
 
 </html>
