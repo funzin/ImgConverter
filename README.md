@@ -8,7 +8,7 @@
   <a href="https://github.com/funzin/ImgConverter/actions/workflows/test.yml">
     <img src="https://github.com/funzin/ImgConverter/actions/workflows/test.yml/badge.svg" alt="Tests" />
   </a>
-  <a href="https://chrome.google.com/webstore/detail/imgconverter-for-github/pkgimcoeodgcdfnidhgijpopkfhbcomm">
+  <a href="https://chromewebstore.google.com/detail/imgconverter/pkgimcoeodgcdfnidhgijpopkfhbcomm">
     <img src="https://img.shields.io/badge/chrome_extensions-gray.svg?style=flat" alt="Chrome Web Store" />
   </a>
   <a href="https://addons.mozilla.org/en-US/firefox/addon/imgconverter/">
@@ -23,7 +23,7 @@ ImgConverter is a Chrome and Firefox extension that converts Markdown images to 
 
 ## Convert Markdown images
 
-1. Install ImgConverter from the [Chrome Web Store](https://chrome.google.com/webstore/detail/imgconverter-for-github/pkgimcoeodgcdfnidhgijpopkfhbcomm) or [Firefox Add-ons](https://addons.mozilla.org/en-US/firefox/addon/imgconverter/).
+1. Install ImgConverter from the [Chrome Web Store](https://chromewebstore.google.com/detail/imgconverter/pkgimcoeodgcdfnidhgijpopkfhbcomm) or [Firefox Add-ons](https://addons.mozilla.org/en-US/firefox/addon/imgconverter/).
 2. Click in a text field that contains a Markdown image, such as `![title](https://github.com/user-attachments/assets/2346e618-890a-4baf-ab76-b69353fbb68a)`. GitHub also inserts an upload as `<img width="640" height="131" alt="Screenshot 2026-10-16 125850" src="https://github.com/user-attachments/assets/2346e618-890a-4baf-ab76-b69353fbb68a" />`. ImgConverter converts that tag too.
 3. Click the ImgConverter icon in the browser toolbar. If you do not see the icon, open the Extensions menu from the puzzle icon.
 
