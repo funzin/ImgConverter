@@ -1,6 +1,6 @@
 {
   "name": "imgconverter",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "Convert Markdown images to HTML img tags with one click.",
   "devDependencies": {
     "@eslint/js": "^10.0.1",
