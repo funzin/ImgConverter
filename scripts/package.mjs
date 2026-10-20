@@ -79,11 +79,16 @@ function walk(entry, files) {
   for (const child of readdirSync(entry, { withFileTypes: true })) {
     const full = path.join(entry, child.name);
     if (child.isDirectory()) walk(full, files);
-    else files.push(full);
+    else if (isPackagedFile(full)) files.push(full);
   }
 }
 
+function isPackagedFile(file) {
+  return !file.endsWith('.ts') && !file.endsWith('.tsx') && !file.endsWith('.map');
+}
+
 function isRuntimeEntry(name) {
+  if (name.endsWith('.ts') || name.endsWith('.tsx') || name.endsWith('.map')) return false;
   const directories = new Set([
     'src/',
     'src/html/',
