@@ -78,10 +78,11 @@ ImgConverter is not limited to specific sites. These sites are tested:
 - JavaScript
 - Node.js 22.x or 24.x (CI)
 - npm
-- Karma with Jasmine
+- Node's built-in test runner, plus Playwright for the React editor and script injection specs
 
 ```bash
 npm test
+npm run lint
 npm run debug_test
 npm run package
 ```

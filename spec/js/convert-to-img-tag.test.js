@@ -1,9 +1,14 @@
-// Function test
-describe("convertToImgTag", function(){
+const { describe, it, beforeEach } = require('node:test')
+const { installDom, loadConverter, expect } = require('../helpers/browser')
+
+installDom()
+loadConverter()
+
+describe("convertToImgTag", { concurrency: false }, function(){
   var text;
   var result;
 
-  describe('when text contains markdown image', function () {
+  describe('when text contains markdown image', { concurrency: false }, function () {
     beforeEach(function () {
       text = "hogehoge![title](https://user-images.githubusercontent.com/test0.png)\n \
               hogehoge![title](https://img.esa.io/uploads/production/pictures/image/test1.png)"
@@ -16,7 +21,7 @@ describe("convertToImgTag", function(){
     })
   }) 
 
-  describe('when image title contains space', function () {
+  describe('when image title contains space', { concurrency: false }, function () {
     beforeEach(function () {
       text = "hogehoge![hello world](https://user-images.githubusercontent.com/test0.png)\n \
               hogehoge![hello world](https://img.esa.io/uploads/production/pictures/image/test1.png)"
@@ -29,7 +34,7 @@ describe("convertToImgTag", function(){
     })
   }) 
 
-  describe('when image title contains multi spaces', function () {
+  describe('when image title contains multi spaces', { concurrency: false }, function () {
     beforeEach(function () {
       text = "hogehoge![Img from iOS (1)](https://user-images.githubusercontent.com/test0.png)\n \
               hogehoge![Img from iOS (2)](https://img.esa.io/uploads/production/pictures/image/test1.png)"
@@ -42,7 +47,7 @@ describe("convertToImgTag", function(){
     })
   }) 
 
-  describe('when text does not contain markdown image', function () {
+  describe('when text does not contain markdown image', { concurrency: false }, function () {
     beforeEach(function () {
       text = "hogehoge\nhogehoge"
       result = convertToImgTag(text, "")
@@ -52,7 +57,7 @@ describe("convertToImgTag", function(){
     })
   }) 
 
-  describe('when text does not contain file extension', function () {
+  describe('when text does not contain file extension', { concurrency: false }, function () {
     beforeEach(function () {
       text = "hogehoge![title](https://user-images.githubusercontent.com/test0)\n \
               hogehoge![title](https://img.esa.io/uploads/production/pictures/image/test1)"
@@ -66,19 +71,19 @@ describe("convertToImgTag", function(){
   }) 
 })
 
-describe("convertOnlySelectionToImgTag", function(){
+describe("convertOnlySelectionToImgTag", { concurrency: false }, function(){
   var text;
   var result;
   var start;
   var end;
 
-  describe('when text contains markdown image', function () {
+  describe('when text contains markdown image', { concurrency: false }, function () {
     beforeEach(function () {
       text = "start![title](https://user-images.githubusercontent.com/test0.png)end"
     })
 
-    describe('when markdown image text is selected', function () {
-      describe('when selection range is from text start to img tag end', function () {
+    describe('when markdown image text is selected', { concurrency: false }, function () {
+      describe('when selection range is from text start to img tag end', { concurrency: false }, function () {
         beforeEach(function () {
           start = 0
           end = 66
@@ -90,7 +95,7 @@ describe("convertOnlySelectionToImgTag", function(){
         })
       })
 
-      describe('when selection range is from img tag start to img tag end', function () {
+      describe('when selection range is from img tag start to img tag end', { concurrency: false }, function () {
         beforeEach(function () {
           start = 5
           end = 66
@@ -102,7 +107,7 @@ describe("convertOnlySelectionToImgTag", function(){
         })
       })
 
-      describe('when selection range is from img tag start to text end', function () {
+      describe('when selection range is from img tag start to text end', { concurrency: false }, function () {
         beforeEach(function () {
           start = 5
           end = 70
@@ -115,7 +120,7 @@ describe("convertOnlySelectionToImgTag", function(){
       })
     })
 
-    describe('when markdown image text is not selected', function () {
+    describe('when markdown image text is not selected', { concurrency: false }, function () {
       beforeEach(function () {
         start = 0
         end = 0
@@ -128,11 +133,11 @@ describe("convertOnlySelectionToImgTag", function(){
   })
 })
 
-describe('createParams', function () {
+describe('createParams', { concurrency: false }, function () {
   var result;
   var storage;
 
-  describe('when storage property is null', function () {
+  describe('when storage property is null', { concurrency: false }, function () {
     beforeEach(function () {
       storage = {
         width: null,
@@ -147,7 +152,7 @@ describe('createParams', function () {
     })
   })
 
-  describe('when storage have only width', function () {
+  describe('when storage have only width', { concurrency: false }, function () {
     beforeEach(function () {
       storage = {
         width: '200px',
@@ -162,7 +167,7 @@ describe('createParams', function () {
     })
 
   })
-  describe('when storage have only height', function () {
+  describe('when storage have only height', { concurrency: false }, function () {
     beforeEach(function () {
       storage = {
         width: null,
@@ -176,7 +181,7 @@ describe('createParams', function () {
       )
     })
   })
-  describe('when storage have width and height', function () {
+  describe('when storage have width and height', { concurrency: false }, function () {
     beforeEach(function () {
       storage = {
         width: "200px",
@@ -193,11 +198,11 @@ describe('createParams', function () {
   })
 })
 
-describe('createMarkdownImages', function () {
+describe('createMarkdownImages', { concurrency: false }, function () {
   var result;
   var text;
 
-  describe('when text is empty', function () {
+  describe('when text is empty', { concurrency: false }, function () {
     beforeEach(function () {
       text = ""
       result = createMarkdownImages(text, "")
@@ -207,7 +212,7 @@ describe('createMarkdownImages', function () {
     })
   })
 
-  describe('when text does not contain md image', function () {
+  describe('when text does not contain md image', { concurrency: false }, function () {
       beforeEach(function () {
         text = "hogehoge"
         result = createMarkdownImages(text, "")
@@ -216,7 +221,7 @@ describe('createMarkdownImages', function () {
         expect(result).toEqual(null)
       })
     })
-  describe('when text contains supported extensions', function () {
+  describe('when text contains supported extensions', { concurrency: false }, function () {
     beforeEach(function () {
       text = "hogehoge![title](https://user-images.githubusercontent.com/test0.jpg)\n \
                 hogehoge![title](https://user-images.githubusercontent.com/test1.png)\n \
@@ -235,7 +240,7 @@ describe('createMarkdownImages', function () {
       })
     })
   })
-  describe('when text does not contain file extension', function () {
+  describe('when text does not contain file extension', { concurrency: false }, function () {
     beforeEach(function () {
       text = "hogehoge![title](https://user-images.githubusercontent.com/test)hogehoge"
       result = createMarkdownImages(text, "")
@@ -252,8 +257,8 @@ describe('createMarkdownImages', function () {
       expect(markdownImage.mdImageText).toEqual(mdImageText)
     })
   })
-  describe('when text contains md image', function () {
-    describe('when text contains one md image', function () {
+  describe('when text contains md image', { concurrency: false }, function () {
+    describe('when text contains one md image', { concurrency: false }, function () {
       beforeEach(function () {
         text = "hogehoge![title](https://user-images.githubusercontent.com/test1.png)hogehoge"
         result = createMarkdownImages(text, "")
@@ -271,7 +276,7 @@ describe('createMarkdownImages', function () {
       })
     })
 
-    describe('when text contains two md images', function () {
+    describe('when text contains two md images', { concurrency: false }, function () {
       beforeEach(function () {
         text = "hogehoge![title](https://user-images.githubusercontent.com/test0.png)hogehoge\n \
                 hogehoge![title](https://user-images.githubusercontent.com/test1.png)hogehoge"
@@ -288,7 +293,7 @@ describe('createMarkdownImages', function () {
       })
     })
 
-    describe('when one line of text contains two md images', function () {
+    describe('when one line of text contains two md images', { concurrency: false }, function () {
       beforeEach(function () {
         text = "![title](https://user-images.githubusercontent.com/test0.png)|![title](https://user-images.githubusercontent.com/test1.png)hogehoge"
         result = createMarkdownImages(text, "")
@@ -306,7 +311,7 @@ describe('createMarkdownImages', function () {
   })
 })
 
-describe('convertToImgTag tag spacing', function () {
+describe('convertToImgTag tag spacing', { concurrency: false }, function () {
   const markdown = '![title](https://user-images.githubusercontent.com/test.png)'
 
   it('emits no size when params is empty', function () {
@@ -344,8 +349,8 @@ describe('convertToImgTag tag spacing', function () {
   })
 })
 
-describe('convertToImgTag regex edge cases (characterization)', function () {
-  describe('when http and https images share one line', function () {
+describe('convertToImgTag regex edge cases (characterization)', { concurrency: false }, function () {
+  describe('when http and https images share one line', { concurrency: false }, function () {
     it('leaves the http image text and converts only the https image', function () {
       var text = '![a](http://a.com/1.png) ![b](https://b.com/2.png)'
       var result = convertToImgTag(text, '')
@@ -353,7 +358,7 @@ describe('convertToImgTag regex edge cases (characterization)', function () {
     })
   })
 
-  describe('when alt contains a parenthesized https URL', function () {
+  describe('when alt contains a parenthesized https URL', { concurrency: false }, function () {
     it('uses the destination URL after ](, not the alt URL', function () {
       var text = '![see (https://docs.example.com)](https://cdn.example.com/x.png)'
       var result = convertToImgTag(text, '')
@@ -361,7 +366,7 @@ describe('convertToImgTag regex edge cases (characterization)', function () {
     })
   })
 
-  describe('when the URL contains $&', function () {
+  describe('when the URL contains $&', { concurrency: false }, function () {
     it('keeps $& literal in the src attribute', function () {
       var text = '![x](https://a.com/$&.png)'
       var result = convertToImgTag(text, '')
@@ -369,7 +374,7 @@ describe('convertToImgTag regex edge cases (characterization)', function () {
     })
   })
 
-  describe('when the URL contains $$', function () {
+  describe('when the URL contains $$', { concurrency: false }, function () {
     it('keeps $$ literal in the src attribute', function () {
       var text = '![x](https://a.com/$$.png)'
       var result = convertToImgTag(text, '')
@@ -377,7 +382,7 @@ describe('convertToImgTag regex edge cases (characterization)', function () {
     })
   })
 
-  describe('when the URL path contains parentheses', function () {
+  describe('when the URL path contains parentheses', { concurrency: false }, function () {
     it('keeps the full URL through the closing ) of the markdown', function () {
       var text = '![x](https://a.com/foo(bar).png)'
       var result = convertToImgTag(text, '')
@@ -385,7 +390,7 @@ describe('convertToImgTag regex edge cases (characterization)', function () {
     })
   })
 
-  describe('when the URL path nests parentheses', function () {
+  describe('when the URL path nests parentheses', { concurrency: false }, function () {
     it('keeps the full URL through the closing ) of the markdown', function () {
       var text = '![x](https://a.com/foo(bar(baz)).png)'
       var result = convertToImgTag(text, '')
@@ -393,7 +398,7 @@ describe('convertToImgTag regex edge cases (characterization)', function () {
     })
   })
 
-  describe('when the destination has an unmatched opening parenthesis', function () {
+  describe('when the destination has an unmatched opening parenthesis', { concurrency: false }, function () {
     it('does not convert and does not return a truncated src', function () {
       var text = '![x](https://a.com/foo(bar.png)'
       var result = convertToImgTag(text, '')
@@ -402,7 +407,7 @@ describe('convertToImgTag regex edge cases (characterization)', function () {
   })
 })
 
-describe('GitHub user-attachments uploads', function () {
+describe('GitHub user-attachments uploads', { concurrency: false }, function () {
   const upload = '<img width="640" height="131" alt="Screenshot 2026-10-16 125850" src="https://github.com/user-attachments/assets/2346e618-890a-4baf-ab76-b69353fbb68a" />'
   const url = 'https://github.com/user-attachments/assets/2346e618-890a-4baf-ab76-b69353fbb68a'
 
@@ -435,7 +440,7 @@ describe('GitHub user-attachments uploads', function () {
   })
 })
 
-describe('quoted img attributes', function () {
+describe('quoted img attributes', { concurrency: false }, function () {
   const url = 'https://user-images.githubusercontent.com/test.png'
   const markdown = '![title](' + url + ')'
 
