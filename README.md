@@ -75,12 +75,13 @@ ImgConverter is not limited to specific sites. These sites are tested:
 
 ## Develop
 
-- JavaScript
+- TypeScript (`strict`), compiled with `tsc` to the classic scripts in `src/js`
 - Node.js 22.x or 24.x (CI)
 - npm
 - Node's built-in test runner, plus Playwright for the React editor and script injection specs
 
 ```bash
+npm run typecheck
 npm test
 npm run lint
 npm run debug_test
@@ -91,7 +92,7 @@ npm run package
 
 Push a tag `vX.Y.Z` whose numbers match `version` in `manifest.json` and `package.json`. The release workflow runs the tests, builds `dist/ImgConverter-X.Y.Z.zip`, and attaches that zip to a GitHub Release named ImgConverter X.Y.Z.
 
-`npm run package` builds the same zip. The zip contains `manifest.json`, the files under `src/html` and `src/js`, and the files under `resource/image/icons`.
+`npm run package` compiles the TypeScript, then builds the same zip. The zip contains `manifest.json`, the files under `src/html`, the compiled scripts under `src/js`, and the files under `resource/image/icons`.
 
 ## Report a problem
 

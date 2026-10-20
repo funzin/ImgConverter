@@ -5,17 +5,21 @@
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "@playwright/test": "^1.64.1",
+    "@types/chrome": "^0.3.5",
     "eslint": "^10.13.0",
     "globals": "^17.13.0",
     "jsdom": "^30.1.3",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react-dom": "^18.3.1",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.72.0"
   },
   "scripts": {
-    "test": "mkdir -p coverage && node --test --experimental-test-coverage --test-coverage-include=src/js/convert-to-img-tag.js --test-coverage-include=src/js/options.js --test-reporter=spec --test-reporter=lcov --test-reporter-destination=stdout --test-reporter-destination=coverage/lcov.info spec/js/*.test.js && playwright test",
-    "debug_test": "playwright test --headed",
+    "typecheck": "tsc --noEmit",
+    "test": "tsc && mkdir -p coverage && node --test --experimental-test-coverage --test-coverage-include=src/js/convert-to-img-tag.js --test-coverage-include=src/js/options.js --test-reporter=spec --test-reporter=lcov --test-reporter-destination=stdout --test-reporter-destination=coverage/lcov.info spec/js/*.test.js && playwright test",
+    "debug_test": "tsc && playwright test --headed",
     "lint": "eslint .",
-    "package": "node scripts/package.mjs"
+    "package": "tsc && node scripts/package.mjs"
   },
   "repository": {
     "type": "git",

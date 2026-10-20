@@ -95,4 +95,6 @@ blob-report/
 
 dist/
 
+src/js/*.js
+
 

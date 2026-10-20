@@ -17,6 +17,9 @@ function installDom() {
   global.document = window.document
   global.Document = window.Document
   global.HTMLElement = window.HTMLElement
+  global.HTMLInputElement = window.HTMLInputElement
+  global.HTMLTextAreaElement = window.HTMLTextAreaElement
+  global.HTMLFormElement = window.HTMLFormElement
   global.Node = window.Node
   global.Event = window.Event
   global.DOMParser = window.DOMParser
