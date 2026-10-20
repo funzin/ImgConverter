@@ -119,10 +119,86 @@ describe('Storage', function () {
       spyObj = spyOn(chrome.storage.sync, "set")
       document.getElementById("save").click()
     })
-    it('stores an empty width and the valid height', function () {
-      expect(spyObj).toHaveBeenCalledWith({ width: "", height: "200px" })
-      expect(document.getElementById("width").value).toBe("")
+    it('keeps the typed size and explains the width', function () {
+      expect(spyObj).not.toHaveBeenCalled()
+      expect(document.getElementById("width").value).toBe("100 onerror=x")
       expect(document.getElementById("height").value).toBe("200px")
+      expect(document.getElementById("width").getAttribute("aria-invalid")).toBe("true")
+      expect(document.getElementById("height").hasAttribute("aria-invalid")).toBe(false)
+      expect(document.activeElement).toBe(document.getElementById("width"))
+      var status = document.getElementById("status")
+      expect(status && status.textContent).toBe("Width: Use digits, optionally followed by px or %, like 200px or 50%. Nothing was saved.")
+    })
+  })
+
+  describe('when both sizes are rejected', function () {
+    beforeEach(function () {
+      document.getElementById("width").value = "nope"
+      document.getElementById("height").value = "10.5"
+      spyObj = spyOn(chrome.storage.sync, "set")
+      document.getElementById("save").click()
+    })
+    it('names both fields and saves nothing', function () {
+      expect(spyObj).not.toHaveBeenCalled()
+      var status = document.getElementById("status")
+      expect(status && status.textContent).toBe("Width and Height: Use digits, optionally followed by px or %, like 200px or 50%. Nothing was saved.")
+      expect(document.getElementById("width").getAttribute("aria-invalid")).toBe("true")
+      expect(document.getElementById("height").getAttribute("aria-invalid")).toBe("true")
+      expect(document.activeElement).toBe(document.getElementById("width"))
+    })
+  })
+
+  describe('when a valid size is saved', function () {
+    it('shows Saved and then clears it', function () {
+      jasmine.clock().install()
+      try {
+        document.getElementById("width").value = "200"
+        document.getElementById("height").value = ""
+        spyObj = spyOn(chrome.storage.sync, "set")
+        document.getElementById("save").click()
+        var status = document.getElementById("status")
+        expect(status && status.textContent).toBe("Saved")
+        expect(spyObj).toHaveBeenCalledWith({ width: "200", height: "" })
+        jasmine.clock().tick(2000)
+        status = document.getElementById("status")
+        expect(status && status.textContent).toBe("")
+      } finally {
+        jasmine.clock().uninstall()
+      }
+    })
+  })
+
+  describe('when enter submits the form', function () {
+    it('saves the height', function () {
+      document.getElementById("height").value = "50%"
+      spyObj = spyOn(chrome.storage.sync, "set")
+      document.getElementById("height").form.requestSubmit()
+      expect(spyObj).toHaveBeenCalledTimes(1)
+      expect(spyObj).toHaveBeenCalledWith({ width: "", height: "50%" })
+      var status = document.getElementById("status")
+      expect(status && status.textContent).toBe("Saved")
+    })
+  })
+
+  describe('when the fields are labeled', function () {
+    it('names each field and points at the hint', function () {
+      var width = document.getElementById("width")
+      var height = document.getElementById("height")
+      expect(width.labels[0] && width.labels[0].textContent).toBe("Width")
+      expect(height.labels[0] && height.labels[0].textContent).toBe("Height")
+      expect(width.getAttribute("aria-describedby")).toBe("size-hint")
+      expect(height.getAttribute("aria-describedby")).toBe("size-hint")
+    })
+  })
+
+  describe('when the options document is parsed', function () {
+    it('loads one deferred options script', function () {
+      var doc = new DOMParser().parseFromString(__html__['src/html/options.html'], 'text/html')
+      var scripts = doc.querySelectorAll('script')
+      expect(scripts.length).toBe(1)
+      expect(scripts[0].getAttribute('src')).toBe('../js/options.js')
+      expect(scripts[0].defer).toBe(true)
+      expect(scripts[0].textContent).toBe('')
     })
   })
 
