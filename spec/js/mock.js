@@ -1,9 +1,9 @@
-var mockStorageData = {width: "100", height: "0"}
+mockStorageData = {width: "100", height: "0"}
 
 chrome = {
   storage: {
     sync: {
-      set: function(size) {
+      set: function() {
       },
       get: function(method) {
         method(mockStorageData)
