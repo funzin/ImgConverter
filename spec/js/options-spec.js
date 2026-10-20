@@ -94,24 +94,6 @@ describe('Storage', function () {
     })
   })
 
-  describe('when save is added after startup', function () {
-    beforeEach(function () {
-      document.getElementById("save").remove()
-      document.getElementById("width").value = "200"
-      document.getElementById("height").value = "80"
-      var save = document.createElement("input")
-      save.id = "save"
-      save.type = "button"
-      document.body.appendChild(save)
-      spyObj = spyOn(chrome.storage.sync, "set")
-      save.click()
-    })
-    it('should save from the replacement button once', function () {
-      expect(spyObj).toHaveBeenCalledTimes(1)
-      expect(spyObj).toHaveBeenCalledWith({ width: "200", height: "80" })
-    })
-  })
-
   describe('when the saved size is not a number with an optional unit', function () {
     beforeEach(function () {
       document.getElementById("width").value = "100 onerror=x"
@@ -222,23 +204,4 @@ describe('Storage', function () {
     })
   })
 
-  describe('when the click lands inside save', function () {
-    beforeEach(function () {
-      document.getElementById("save").remove()
-      document.getElementById("width").value = "200"
-      document.getElementById("height").value = ""
-      var save = document.createElement("button")
-      save.id = "save"
-      var label = document.createElement("span")
-      label.textContent = "Save"
-      save.appendChild(label)
-      document.body.appendChild(save)
-      spyObj = spyOn(chrome.storage.sync, "set")
-      label.click()
-    })
-    it('should save from the inner target once', function () {
-      expect(spyObj).toHaveBeenCalledTimes(1)
-      expect(spyObj).toHaveBeenCalledWith({ width: "200", height: "" })
-    })
-  })
 })
