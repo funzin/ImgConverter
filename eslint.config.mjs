@@ -31,7 +31,7 @@ export default [
     files: ['src/**/*.ts'],
     languageOptions: {
       ecmaVersion: 2022,
-      sourceType: 'script',
+      sourceType: 'module',
       globals: sharedGlobals,
     },
   },
@@ -66,6 +66,50 @@ export default [
         React: 'readonly',
         ReactDOM: 'readonly',
       },
+    },
+  },
+  {
+    files: ['src/js/options.ts'],
+    rules: {
+      'no-restricted-imports': ['error', {
+        patterns: [
+          {
+            group: ['**/convert', '**/convert.ts', '../pure/convert', '../pure/convert.ts'],
+            message: 'options does not import the converter',
+          },
+          {
+            group: ['../pure/css-size', '../pure/css-size.ts'],
+            importNames: ['createParams'],
+            message: 'options imports canonicalSize and decideSave',
+          },
+        ],
+      }],
+    },
+  },
+  {
+    files: ['src/js/background.ts'],
+    rules: {
+      'no-restricted-imports': ['error', {
+        patterns: [
+          {
+            group: ['../pure/*', '../pure/**'],
+            message: 'background does not import pure modules',
+          },
+        ],
+      }],
+    },
+  },
+  {
+    files: ['src/pure/**/*.ts'],
+    rules: {
+      'no-restricted-imports': ['error', {
+        patterns: [
+          {
+            group: ['*', '../*', './*', '../**'],
+            message: 'css-size has no imports',
+          },
+        ],
+      }],
     },
   },
   {
