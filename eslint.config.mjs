@@ -100,7 +100,20 @@ export default [
     },
   },
   {
-    files: ['src/pure/**/*.ts'],
+    files: ['src/js/convert-to-img-tag.ts'],
+    rules: {
+      'no-restricted-imports': ['error', {
+        patterns: [
+          {
+            group: ['../pure/css-size', '../pure/css-size.ts', '**/css-size', '**/css-size.ts'],
+            message: 'the click script imports the converter',
+          },
+        ],
+      }],
+    },
+  },
+  {
+    files: ['src/pure/css-size.ts'],
     rules: {
       'no-restricted-imports': ['error', {
         patterns: [
