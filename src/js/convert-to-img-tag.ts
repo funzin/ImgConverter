@@ -1,4 +1,6 @@
-type SizeParams = { width: CssSize | null; height: CssSize | null }
+import { createParams } from "../pure/css-size"
+
+type SizeParams = { width: string | null; height: string | null }
 type ConvertParams = SizeParams | "" | null | undefined
 
 type ConvertGlobals = typeof globalThis & {
@@ -93,20 +95,6 @@ function convertToImgTag(text: string, params: ConvertParams): string | null {
   return replacedText
 }
 
-function isParsedSize(input: string): input is CssSize {
-  return /^(\d+)(px|%)?$/.test(input)
-}
-
-function parseSize(raw: unknown): CssSize | null {
-  if (raw == null) return null
-  const text = String(raw).trim()
-  const match = /^(\d+)(px|%)?$/i.exec(text)
-  if (match == null || match[1] == null) return null
-  const canonical = match[1] + (match[2] ? match[2].toLowerCase() : "")
-  if (!isParsedSize(canonical)) return null
-  return canonical
-}
-
 function escapeAttr(value: string): string {
   return String(value)
     .replace(/&/g, "&amp;")
@@ -179,17 +167,4 @@ function createMarkdownImages(text: string, params: ConvertParams): Array<{ url:
 
   if (markdownImageArray.length == 0) { return null }
   return markdownImageArray
-}
-
-function createParams(storage: { [key: string]: unknown }): SizeParams {
-  let width = parseSize(storage.width)
-  const height = parseSize(storage.height)
-  if (width == null && height == null) {
-    const fallback = parseSize("50%")
-    if (fallback == null) {
-      throw new Error("50% is a valid size")
-    }
-    width = fallback
-  }
-  return { width: width, height: height }
 }
