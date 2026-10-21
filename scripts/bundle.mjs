@@ -21,6 +21,8 @@ await esbuild.build({
   logLevel: 'warning',
 })
 
+await bundlePureTests()
+
 assertEntrySet()
 for (const name of entryNames) {
   assertClassicIife(path.join('src/js', name))
@@ -28,6 +30,34 @@ for (const name of entryNames) {
 assertPublishedStrings()
 assertSeparatedBundles()
 assertConverterEvaluatesTwice()
+
+async function bundlePureTests() {
+  let names
+  try {
+    names = readdirSync('spec/pure', { withFileTypes: true })
+  } catch (error) {
+    if (error.code === 'ENOENT') return
+    throw error
+  }
+  const entryPoints = names
+    .filter((child) => child.isFile() && child.name.endsWith('.test.ts'))
+    .map((child) => path.join('spec/pure', child.name))
+  if (entryPoints.length === 0) return
+  await esbuild.build({
+    entryPoints,
+    bundle: true,
+    format: 'cjs',
+    platform: 'node',
+    target: 'es2022',
+    outdir: 'spec/pure/.out',
+    outbase: 'spec/pure',
+    external: ['node:test', 'node:assert/strict'],
+    sourcemap: false,
+    minify: false,
+    legalComments: 'none',
+    logLevel: 'warning',
+  })
+}
 
 function fail(message) {
   console.error(message)

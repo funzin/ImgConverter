@@ -17,7 +17,7 @@
   },
   "scripts": {
     "typecheck": "tsc --noEmit -p tsconfig.json && tsc --noEmit -p tsconfig.pure.json",
-    "test": "npm run typecheck && node scripts/bundle.mjs && mkdir -p coverage && node --test --experimental-test-coverage --test-coverage-include=src/js/convert-to-img-tag.js --test-coverage-include=src/js/options.js --test-reporter=spec --test-reporter=lcov --test-reporter-destination=stdout --test-reporter-destination=coverage/lcov.info spec/js/*.test.js && playwright test",
+    "test": "npm run typecheck && node scripts/bundle.mjs && mkdir -p coverage && node --test --experimental-test-coverage --test-coverage-include=src/js/convert-to-img-tag.js --test-coverage-include=src/js/options.js --test-reporter=spec --test-reporter=lcov --test-reporter-destination=stdout --test-reporter-destination=coverage/lcov.info spec/js/*.test.js spec/pure/.out/*.test.js && playwright test",
     "debug_test": "npm run typecheck && node scripts/bundle.mjs && playwright test --headed",
     "lint": "eslint .",
     "package": "npm run typecheck && node scripts/bundle.mjs && node scripts/package.mjs"
