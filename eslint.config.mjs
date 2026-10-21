@@ -17,6 +17,7 @@ export default [
       'playwright-report/**',
       'blob-report/**',
       'src/js/**/*.js',
+      'spec/pure/.out/**',
     ],
   },
   js.configs.recommended,
@@ -52,6 +53,16 @@ export default [
         loadStorage: 'readonly',
         setText: 'writable',
         self: 'readonly',
+      },
+    },
+  },
+  {
+    files: ['spec/pure/**/*.ts'],
+    languageOptions: {
+      ecmaVersion: 2022,
+      sourceType: 'module',
+      globals: {
+        ...globals.node,
       },
     },
   },

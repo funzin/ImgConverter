@@ -96,5 +96,6 @@ blob-report/
 dist/
 
 src/js/*.js
+spec/pure/.out/
 
 
