@@ -1,3 +1,26 @@
+type SizeParams = { width: CssSize | null; height: CssSize | null }
+type ConvertParams = SizeParams | "" | null | undefined
+
+type ConvertGlobals = typeof globalThis & {
+  convertToImgTag: (text: string, params: ConvertParams) => string | null
+  convertOnlySelectionToImgTag: (
+    text: string,
+    params: ConvertParams,
+    start: number | null,
+    end: number | null,
+  ) => string | null
+  createParams: (storage: { [key: string]: unknown }) => SizeParams
+  createMarkdownImages: (
+    text: string,
+    params: ConvertParams,
+  ) => Array<{ url: string; mdImageText: string; imageTag: string }> | null
+}
+
+(globalThis as ConvertGlobals).convertToImgTag = convertToImgTag;
+(globalThis as ConvertGlobals).convertOnlySelectionToImgTag = convertOnlySelectionToImgTag;
+(globalThis as ConvertGlobals).createParams = createParams;
+(globalThis as ConvertGlobals).createMarkdownImages = createMarkdownImages;
+
 chrome.storage.sync.get(function (storage) {
   const activeTextElement = document.activeElement
   if (activeTextElement == null) { return }
@@ -47,9 +70,6 @@ function callOn(el: Element, name: string): void {
   }
   method.call(el)
 }
-
-type SizeParams = { width: CssSize | null; height: CssSize | null }
-type ConvertParams = SizeParams | "" | null | undefined
 
 function convertOnlySelectionToImgTag(text: string, params: ConvertParams, start: number | null, end: number | null): string | null {
   const selectedText = text.substring(start ?? 0, end ?? 0)

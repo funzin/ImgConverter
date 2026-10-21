@@ -1,10 +1,18 @@
-loadStorage()
-
 type StorageItems = { [key: string]: unknown }
+
+type OptionsGlobals = typeof globalThis & {
+  loadStorage: () => void
+  setText: (size: StorageItems) => void
+}
+
+(globalThis as OptionsGlobals).loadStorage = loadStorage;
+(globalThis as OptionsGlobals).setText = setText;
+
+loadStorage()
 
 function loadStorage(): void {
   chrome.storage.sync.get(function (size) {
-    setText(size)
+    (globalThis as OptionsGlobals).setText(size)
   })
 }
 
@@ -117,7 +125,7 @@ function saveSize(): void {
     width: savedWidth,
     height: savedHeight,
   }
-  chrome.storage.sync.set(size)
-  setText(size)
+  chrome.storage.sync.set(size);
+  (globalThis as OptionsGlobals).setText(size)
   showStatus("Saved", 2000)
 }
