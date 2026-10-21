@@ -26,6 +26,7 @@ for (const name of entryNames) {
   assertClassicIife(path.join('src/js', name))
 }
 assertPublishedStrings()
+assertSeparatedBundles()
 assertConverterEvaluatesTwice()
 
 function fail(message) {
@@ -90,6 +91,17 @@ function assertPublishedStrings() {
   if (!options.includes('Nothing was saved')) fail('options.js is missing Nothing was saved')
   if (!convert.includes('insertText')) fail('convert-to-img-tag.js is missing insertText')
   if (!convert.includes('user-attachments')) fail('convert-to-img-tag.js is missing user-attachments')
+}
+
+function assertSeparatedBundles() {
+  const options = readFileSync('src/js/options.js', 'utf8')
+  const convert = readFileSync('src/js/convert-to-img-tag.js', 'utf8')
+  if (options.includes('user-attachments') || options.includes('50%')) {
+    fail('options.js contains click-only text')
+  }
+  if (convert.includes('Nothing was saved') || convert.includes('statusTimer')) {
+    fail('convert-to-img-tag.js contains options-only text')
+  }
 }
 
 function assertConverterEvaluatesTwice() {

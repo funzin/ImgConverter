@@ -1,42 +1,22 @@
-import { createParams } from "../pure/css-size"
+import { classicGlobals, convertEditorText } from "../pure/convert"
 
-type SizeParams = { width: string | null; height: string | null }
-type ConvertParams = SizeParams | "" | null | undefined
-
-type ConvertGlobals = typeof globalThis & {
-  convertToImgTag: (text: string, params: ConvertParams) => string | null
-  convertOnlySelectionToImgTag: (
-    text: string,
-    params: ConvertParams,
-    start: number | null,
-    end: number | null,
-  ) => string | null
-  createParams: (storage: { [key: string]: unknown }) => SizeParams
-  createMarkdownImages: (
-    text: string,
-    params: ConvertParams,
-  ) => Array<{ url: string; mdImageText: string; imageTag: string }> | null
+const page = globalThis as typeof globalThis & {
+  convertToImgTag: typeof classicGlobals.convertToImgTag
+  convertOnlySelectionToImgTag: typeof classicGlobals.convertOnlySelectionToImgTag
+  createParams: typeof classicGlobals.createParams
+  createMarkdownImages: typeof classicGlobals.createMarkdownImages
 }
-
-(globalThis as ConvertGlobals).convertToImgTag = convertToImgTag;
-(globalThis as ConvertGlobals).convertOnlySelectionToImgTag = convertOnlySelectionToImgTag;
-(globalThis as ConvertGlobals).createParams = createParams;
-(globalThis as ConvertGlobals).createMarkdownImages = createMarkdownImages;
+page.convertToImgTag = classicGlobals.convertToImgTag
+page.convertOnlySelectionToImgTag = classicGlobals.convertOnlySelectionToImgTag
+page.createParams = classicGlobals.createParams
+page.createMarkdownImages = classicGlobals.createMarkdownImages
 
 chrome.storage.sync.get(function (storage) {
   const activeTextElement = document.activeElement
   if (activeTextElement == null) { return }
   const textAreaStr = controlValue(activeTextElement)
   if (textAreaStr == undefined) { return }
-  const params = createParams(storage)
-
-  let replacedText: string | null
-  const bounds = selectionBounds(activeTextElement)
-  if (bounds != null && bounds.start !== bounds.end) {
-    replacedText = convertOnlySelectionToImgTag(textAreaStr, params, bounds.start, bounds.end)
-  } else {
-    replacedText = convertToImgTag(textAreaStr, params)
-  }
+  const replacedText = convertEditorText(textAreaStr, storage, selectionBounds(activeTextElement))
 
   if (replacedText != null) {
     // Assigning value skips the editor's input handler, so React reverts
@@ -71,100 +51,4 @@ function callOn(el: Element, name: string): void {
     throw new TypeError(name + " is not a function")
   }
   method.call(el)
-}
-
-function convertOnlySelectionToImgTag(text: string, params: ConvertParams, start: number | null, end: number | null): string | null {
-  const selectedText = text.substring(start ?? 0, end ?? 0)
-  const imgTagText = convertToImgTag(selectedText, params)
-  if (imgTagText == null) {
-    return null
-  }
-  return text.substring(0, start ?? 0) + imgTagText + text.substring(end ?? 0)
-}
-
-function convertToImgTag(text: string, params: ConvertParams): string | null {
-  let replacedText = text
-  const mdImageArray = createMarkdownImages(text, params)
-
-  if (mdImageArray == null) { return null }
-
-  for (const mdImage of mdImageArray) {
-    replacedText = replacedText.replace(mdImage.mdImageText, () => mdImage.imageTag)
-  }
-
-  return replacedText
-}
-
-function escapeAttr(value: string): string {
-  return String(value)
-    .replace(/&/g, "&amp;")
-    .replace(/"/g, "&quot;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-}
-
-function decodeAttr(value: string): string {
-  return String(value)
-    .replace(/&lt;/g, "<")
-    .replace(/&gt;/g, ">")
-    .replace(/&quot;/g, '"')
-    .replace(/&amp;/g, "&")
-}
-
-function asSize(params: ConvertParams): SizeParams {
-  if (params == null || params === "") return { width: null, height: null }
-  return {
-    width: params.width || null,
-    height: params.height || null,
-  }
-}
-
-function imageTag(url: string, alt: string, size: SizeParams): string {
-  const attrs = [
-    'src="' + escapeAttr(url) + '"',
-    'alt="' + escapeAttr(alt) + '"',
-  ]
-  if (size.width) attrs.push('width="' + size.width + '"')
-  if (size.height) attrs.push('height="' + size.height + '"')
-  return "<img " + attrs.join(" ") + ">"
-}
-
-function namedGroup(match: RegExpMatchArray, name: string): string | null {
-  const groups = match.groups
-  if (groups == null) return null
-  const value = groups[name]
-  if (value == null) return null
-  return value
-}
-
-function createMarkdownImages(text: string, params: ConvertParams): Array<{ url: string; mdImageText: string; imageTag: string }> | null {
-  const markdownImageArray: Array<{ url: string; mdImageText: string; imageTag: string }> = []
-  const size = asSize(params)
-
-  function pushImage(url: string, sourceText: string, alt: string): void {
-    markdownImageArray.push({
-      url: url,
-      mdImageText: sourceText,
-      imageTag: imageTag(url, alt, size),
-    })
-  }
-
-  const markdownImagePattern = /!\[(?<alt>(?:(?!\]\().)*)\]\((?<url>https:(?:[^\s()]|\((?:[^\s()]|\([^\s()]*\))*\))+)\)/gi
-  for (const match of text.matchAll(markdownImagePattern)) {
-    const markdownUrl = namedGroup(match, "url")
-    const markdownAlt = namedGroup(match, "alt")
-    if (markdownUrl == null || markdownAlt == null) continue
-    pushImage(markdownUrl, match[0], markdownAlt)
-  }
-
-  const githubUploadPattern = /<img width="\d+" height="\d+" alt="(?<alt>[^"]*)" src="(?<url>https:\/\/github\.com\/user-attachments\/assets\/[0-9a-fA-F-]+)" \/>/gi
-  for (const match of text.matchAll(githubUploadPattern)) {
-    const uploadUrl = namedGroup(match, "url")
-    const uploadAlt = namedGroup(match, "alt")
-    if (uploadUrl == null || uploadAlt == null) continue
-    pushImage(uploadUrl, match[0], decodeAttr(uploadAlt))
-  }
-
-  if (markdownImageArray.length == 0) { return null }
-  return markdownImageArray
 }
