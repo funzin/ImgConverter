@@ -21,7 +21,7 @@ Preconditions:
 
 - **Automated:** `control-imgconverter drive-convert-selection`. Fills fixture `#comment`, sets `selectionStart` / `selectionEnd` to the markdown token, then injects. Also proves a no-op with a non-empty selection over plain text only.
 - **Artifacts:** `textarea-before.txt`, `textarea-after.txt` (selection-replace result), `textarea-noop-after.txt`, `fixture-after.png` (captured after the no-op leg, so the screenshot still shows markdown), `proof.json` under `$IMGCONVERTER_ARTIFACTS_DIR/convert-selection-only/`.
-- Logic is also covered by Karma `spec/js/convert-to-img-tag-spec.js` (`convertOnlySelectionToImgTag` ranges that contain the token). Collapsed-caret → convert-all is exercised by `drive-convert-all`, not this drive.
+- `spec/js/convert-to-img-tag.test.js` calls `convertOnlySelectionToImgTag` for ranges that contain the token. Those calls pass an empty size string, so the tags in that file have no width attribute. This drive proves `width="50%"`. Collapsed-caret to convert-all is exercised by `drive-convert-all`, not this drive.
 
 ## Gotchas
 

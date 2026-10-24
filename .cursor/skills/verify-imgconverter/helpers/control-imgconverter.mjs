@@ -37,12 +37,43 @@ function sourceExtensionPath() {
   return resolve(env('IMGCONVERTER_REPO_ROOT', REPO_ROOT));
 }
 
+function bundleSource(root) {
+  return new Promise((resolvePromise, reject) => {
+    const child = spawn(process.execPath, ['scripts/bundle.mjs'], {
+      cwd: root,
+      stdio: 'inherit',
+    });
+    child.on('error', reject);
+    child.on('exit', (code) => {
+      if (code === 0) resolvePromise();
+      else reject(new Error(`node scripts/bundle.mjs exited ${code} in ${root}`));
+    });
+  });
+}
+
+function copyExtensionTree(src, dest) {
+  return cp(src, dest, {
+    recursive: true,
+    filter(path) {
+      if (path === src) return true;
+      const rel = path.slice(src.length + 1);
+      const top = rel.split('/')[0];
+      if (top === 'node_modules' || top === '.git' || top === 'coverage' || top === 'test-results' || top === 'playwright-report') {
+        return false;
+      }
+      return !rel.split('/').includes('node_modules');
+    },
+  });
+}
+
 async function verificationExtensionPath(id) {
   const cached = env('IMGCONVERTER_VERIFY_EXT_PATH', '');
   if (cached) return cached;
+  const source = sourceExtensionPath();
+  await bundleSource(source);
   const dest = resolve(env('IMGCONVERTER_VERIFY_EXT_DIR', `/tmp/imgconverter-ext-${id}`));
   await rm(dest, { recursive: true, force: true });
-  await cp(sourceExtensionPath(), dest, { recursive: true });
+  await copyExtensionTree(source, dest);
   const manifestPath = join(dest, 'manifest.json');
   const manifest = JSON.parse(readFileSync(manifestPath, 'utf8'));
   const hostPerm = `http://127.0.0.1:${env('IMGCONVERTER_FIXTURE_PORT', DEFAULT_PORT)}/*`;
@@ -236,10 +267,21 @@ async function cmdDoctor() {
     const page = context.pages()[0] ?? (await context.newPage());
     await page.goto(`chrome-extension://${extensionId}/src/html/options.html`, { waitUntil: 'domcontentloaded' });
 
+    const workerUrl = context.serviceWorkers()[0]?.url() ?? context.backgroundPages()[0]?.url() ?? '';
+    const scriptsOk = await page.evaluate(async () => {
+      const names = ['src/js/background.js', 'src/js/options.js', 'src/js/convert-to-img-tag.js'];
+      const checks = await Promise.all(names.map(async (name) => {
+        const response = await fetch(chrome.runtime.getURL(name));
+        return response.ok;
+      }));
+      return checks.every(Boolean);
+    });
     const ok =
       manifest.name === 'ImgConverter' &&
       manifest.manifest_version === 3 &&
-      (await page.locator('#save').count()) === 1;
+      (await page.locator('#save').count()) === 1 &&
+      scriptsOk === true &&
+      workerUrl.endsWith('/src/js/background.js');
 
     const out = {
       ok,
@@ -248,6 +290,8 @@ async function cmdDoctor() {
       manifestVersion: manifest.manifest_version,
       version: manifest.version,
       optionsUrl: page.url(),
+      serviceWorkerUrl: workerUrl,
+      scriptsOk,
       userDataDir: userDataDir(id),
     };
     console.log(JSON.stringify(out, null, 2));
@@ -359,6 +403,45 @@ async function cmdDriveConvertSelection() {
   });
 }
 
+async function cmdDriveConvertUpload() {
+  const outDir = join(artifactsDir(), 'convert-github-uploads');
+  await mkdir(outDir, { recursive: true });
+
+  await withSession(async ({ context, extensionId, port }) => {
+    const page = await context.newPage();
+    const fixtureUrl = `http://127.0.0.1:${port}/github-comment.html`;
+    const before =
+      'Before text\n<img width="640" height="131" alt="Screenshot 2026-10-16 125850" src="https://github.com/user-attachments/assets/2346e618-890a-4baf-ab76-b69353fbb68a" />\nAfter text';
+    const expected =
+      'Before text\n<img src="https://github.com/user-attachments/assets/2346e618-890a-4baf-ab76-b69353fbb68a" alt="Screenshot 2026-10-16 125850" width="50%">\nAfter text';
+
+    await page.goto(fixtureUrl);
+    const textarea = page.locator('#comment');
+    await textarea.fill(before);
+    await textarea.focus();
+
+    await triggerBrowserAction(context, extensionId);
+    await page.waitForTimeout(500);
+
+    const after = await textarea.inputValue();
+    await writeFile(join(outDir, 'textarea-before.txt'), before, 'utf8');
+    await writeFile(join(outDir, 'textarea-after.txt'), after, 'utf8');
+    await page.screenshot({ path: join(outDir, 'fixture-after.png'), fullPage: true });
+
+    const proof = {
+      ok: after === expected,
+      feature: 'convert-github-uploads',
+      expected,
+      actual: after,
+      fixtureUrl,
+      artifacts: outDir,
+    };
+    await writeFile(join(outDir, 'proof.json'), JSON.stringify(proof, null, 2));
+    console.log(JSON.stringify(proof, null, 2));
+    if (!proof.ok) process.exit(1);
+  });
+}
+
 async function cmdDriveOptionsWidth() {
   const outDir = join(artifactsDir(), 'options-default-size');
   await mkdir(outDir, { recursive: true });
@@ -444,6 +527,7 @@ const handlers = {
   doctor: cmdDoctor,
   'drive-convert-all': cmdDriveConvertAll,
   'drive-convert-selection': cmdDriveConvertSelection,
+  'drive-convert-upload': cmdDriveConvertUpload,
   'drive-options-width': cmdDriveOptionsWidth,
   cleanup: cmdCleanup,
   help: async () => {
@@ -453,6 +537,7 @@ Commands:
   doctor                   Read-only health check (extension id, options page, manifest)
   drive-convert-all        Drive convert-all on github-comment fixture; write proof artifacts
   drive-convert-selection  Drive selection-scoped convert (+ no-op selection); write proof
+  drive-convert-upload     Drive a GitHub user-attachments img tag on the fixture; write proof
   drive-options-width      Save options width then convert; prove custom + empty default
   cleanup                  Remove disposable Chrome profile for IMGCONVERTER_RUN_ID
 
