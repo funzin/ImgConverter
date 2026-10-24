@@ -4,11 +4,12 @@ Maintained source for verifying user-facing extension behavior. Read this index 
 
 ## Baseline preconditions
 
-- Repo dependencies installed (`npm ci` at repo root for unit tests; `npm install --prefix .cursor/skills/verify-imgconverter/helpers` for drives).
+- Repo dependencies installed with `npm ci` at the repo root. The helper runs `node scripts/bundle.mjs`, which needs those dependencies.
+- Harness dependencies installed with `npm install --prefix .cursor/skills/verify-imgconverter/helpers`.
 - Playwright Chromium installed: `npx --prefix .cursor/skills/verify-imgconverter/helpers playwright install chromium`.
 - Set `IMGCONVERTER_RUN_ID` to a unique value per verification run.
 - Set `IMGCONVERTER_ARTIFACTS_DIR` (default `/opt/cursor/artifacts/imgconverter-verify`).
-- Run `control-imgconverter doctor` and require `"ok": true`.
+- Run `control-imgconverter doctor` and require `"ok": true` and `"scriptsOk": true`.
 - Never drive a Chrome profile or patched extension tree you did not create in this run.
 
 ## Driving conventions
@@ -32,4 +33,6 @@ Each feature file uses H1 plus four H2 sections: `Sub-features`, `How to get to 
 
 - [Convert markdown images in textarea](./convert-markdown-images.md) — full-text conversion with default width on the fixture page.
 - [Convert only selected markdown](./convert-selection-only.md) — selection-scoped replacement.
+- [Convert GitHub upload tags](./convert-github-uploads.md) — a GitHub user-attachments `<img>` becomes the same quoted tag.
+- [Convert a React-controlled textarea](./convert-react-editor.md) — preview keeps the converted tag.
 - [Options default width and height](./options-default-size.md) — options page storage and convert-time attributes.

@@ -1,6 +1,6 @@
 ---
 name: verify-imgconverter
-description: Drive ImgConverter (Chrome MV3 extension) on a GitHub-style textarea fixture and options page; use when proving markdown-to-img conversion or default width/height behavior after code changes.
+description: Drive ImgConverter (Chrome MV3 extension) on a GitHub-style textarea fixture and options page; use when proving markdown-to-img conversion, GitHub upload tags, or default width/height behavior after code changes.
 ---
 
 # Verify ImgConverter
@@ -13,9 +13,10 @@ Unit tests (`npm test`) cover conversion helpers but not the full inject-on-clic
 
 One-shot drives (`doctor`, `drive-*`) launch and tear down Chrome themselves. For repeated drives in one session, keep a single run id and profile.
 
-1. From the repo root, install harness deps once:
+1. From the repo root, install dependencies once. The helper runs `node scripts/bundle.mjs` before it copies the extension, and that script needs the repo `devDependencies`.
 
    ```bash
+   npm ci
    npm install --prefix .cursor/skills/verify-imgconverter/helpers
    npx --prefix .cursor/skills/verify-imgconverter/helpers playwright install chromium
    ```
@@ -39,9 +40,9 @@ One-shot drives (`doctor`, `drive-*`) launch and tear down Chrome themselves. Fo
    .cursor/skills/verify-imgconverter/helpers/control-imgconverter doctor
    ```
 
-**Ready when:** `doctor` prints `"ok": true` with a non-empty `extensionId` and an `optionsUrl` that loads `#save`.
+**Ready when:** `doctor` prints `"ok": true` with a non-empty `extensionId`, an `optionsUrl` that loads `#save`, `"scriptsOk": true`, and a `serviceWorkerUrl` ending in `/src/js/background.js`.
 
-**Verification scaffolding:** each run copies the repo to `/tmp/imgconverter-ext-$IMGCONVERTER_RUN_ID` and adds host permission `http://127.0.0.1:$IMGCONVERTER_FIXTURE_PORT/*` under `host_permissions` so background `executeScript` can reach the local fixture (production relies on `activeTab` after a real toolbar click). Cleanup removes the copy and Chrome profile.
+**Verification scaffolding.** Each run bundles classic scripts into `src/js`. Git ignores those esbuild IIFE files. The helper copies the repo to `/tmp/imgconverter-ext-$IMGCONVERTER_RUN_ID` without `node_modules` or `.git`. It adds host permission `http://127.0.0.1:$IMGCONVERTER_FIXTURE_PORT/*` under `host_permissions` so `executeScript` can reach the local fixture. Production relies on `activeTab` after a real toolbar click. Cleanup removes the copy and the Chrome profile. The bundle files in the repo checkout stay.
 
 **Teardown:** `.cursor/skills/verify-imgconverter/helpers/control-imgconverter cleanup` — removes only the profile and patched extension tree for `IMGCONVERTER_RUN_ID`. Never kill Chrome by process name.
 
@@ -53,13 +54,13 @@ Read-only gate before driving:
 .cursor/skills/verify-imgconverter/helpers/control-imgconverter doctor
 ```
 
-Require JSON `"ok": true`, `manifestVersion` `3`, `version` matching `manifest.json`, and options page reachable at `chrome-extension://<extensionId>/src/html/options.html` with `#save` present.
+Require JSON `"ok": true`, `manifestVersion` `3`, `version` matching `manifest.json`, `"scriptsOk": true`, a `serviceWorkerUrl` ending in `/src/js/background.js`, and options page reachable at `chrome-extension://<extensionId>/src/html/options.html` with `#save` present. `scriptsOk` means the extension can fetch `src/js/background.js`, `src/js/options.js`, and `src/js/convert-to-img-tag.js`.
 
 ## Drive
 
 Harness: **Playwright Chromium** (bundled via `helpers/` — not system Google Chrome, which often ignores `--load-extension`).
 
-**Toolbar click path:** the helper focuses the fixture textarea, then runs the same `chrome.scripting.executeScript` file list as `src/js/background.js` from the extension service worker (equivalent to an action click once host permission is granted on the verification copy).
+**Toolbar click path:** the helper focuses the fixture textarea, then runs `chrome.scripting.executeScript` with `files: ['src/js/convert-to-img-tag.js']` in the active tab. That file list matches `src/js/background.ts`. The helper does not call `chrome.action.onClicked`. The drive opens the fixture page first so that page is the active tab. The injected script selects the whole control and writes the result with `document.execCommand("insertText")`.
 
 Read `.cursor/skills/verify-imgconverter/features/README.md` and the feature file for the behavior under test.
 
@@ -67,6 +68,8 @@ Read `.cursor/skills/verify-imgconverter/features/README.md` and the feature fil
 |---------|----------------|
 | `drive-convert-all` | [convert-markdown-images](./features/convert-markdown-images.md) |
 | `drive-convert-selection` | [convert-selection-only](./features/convert-selection-only.md) |
+| `drive-convert-upload` | [convert-github-uploads](./features/convert-github-uploads.md) |
+| `drive-convert-react` | [convert-react-editor](./features/convert-react-editor.md) |
 | `drive-options-width` | [options-default-size](./features/options-default-size.md) |
 
 Example:
@@ -86,7 +89,7 @@ For `convert-markdown-images`:
 - `fixture-after.png` — screenshot of the fixture page
 - `proof.json` — `expected` vs `actual` equality
 
-**Proof standards:** drive the user-visible textarea path on the fixture; capture both action input and resulting value; compare to the default quoted tag `<img src="https://user-images.githubusercontent.com/test0.png" alt="title" width="50%">`; do not use the unit tests as the sole proof when this skill is invoked. `npm test` remains a fast regression check for pure functions.
+**Proof standards:** drive the user-visible textarea path on the fixture; capture both action input and resulting value; compare to the default quoted tag `<img src="https://user-images.githubusercontent.com/test0.png" alt="title" width="50%">`; do not use the unit tests as the sole proof when this skill is invoked. `npm test` remains a fast regression check for pure functions. `drive-convert-upload` compares a GitHub user-attachments tag to `<img src="https://github.com/user-attachments/assets/2346e618-890a-4baf-ab76-b69353fbb68a" alt="Screenshot 2026-10-16 125850" width="50%">`.
 
 ## Cleanup
 
