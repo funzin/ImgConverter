@@ -76,7 +76,7 @@ ImgConverter is not limited to specific sites. These sites are tested:
 ## Develop
 
 - TypeScript (`strict`). esbuild writes the classic scripts in `src/js`
-- Node.js 22.x or 24.x (CI)
+- Node.js 24.x (CI)
 - npm
 - Node's built-in test runner, plus Playwright for the React editor and script injection specs
 
