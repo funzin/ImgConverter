@@ -35,4 +35,4 @@ Preconditions:
 - Headless system Chrome often loads zero extensions; drives use headed Chromium under `xvfb-run` on Linux.
 - The proof tag quotes `src`, `alt`, and `width`. One space separates attributes.
 - GitHub upload tags are a separate feature. See [convert-github-uploads](./convert-github-uploads.md).
-- A plain textarea does not show the React preview path. `spec/browser/react-editor.spec.js` loads the bundle with `addScriptTag` in the page world and checks preview, submit, and undo. This drive does not do that.
+- A plain textarea does not show the React preview path. See [convert-react-editor](./convert-react-editor.md).

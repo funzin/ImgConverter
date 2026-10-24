@@ -69,6 +69,7 @@ Read `.cursor/skills/verify-imgconverter/features/README.md` and the feature fil
 | `drive-convert-all` | [convert-markdown-images](./features/convert-markdown-images.md) |
 | `drive-convert-selection` | [convert-selection-only](./features/convert-selection-only.md) |
 | `drive-convert-upload` | [convert-github-uploads](./features/convert-github-uploads.md) |
+| `drive-convert-react` | [convert-react-editor](./features/convert-react-editor.md) |
 | `drive-options-width` | [options-default-size](./features/options-default-size.md) |
 
 Example:

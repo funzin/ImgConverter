@@ -442,6 +442,75 @@ async function cmdDriveConvertUpload() {
   });
 }
 
+async function cmdDriveConvertReact() {
+  const outDir = join(artifactsDir(), 'convert-react-editor');
+  await mkdir(outDir, { recursive: true });
+
+  await withSession(async ({ context, extensionId, port }) => {
+    const page = await context.newPage();
+    const fixtureUrl = `http://127.0.0.1:${port}/github-comment.html`;
+    const before = '![title](https://user-images.githubusercontent.com/test.png)';
+    const expected = '<img src="https://user-images.githubusercontent.com/test.png" alt="title" width="50%">';
+    const root = sourceExtensionPath();
+
+    await page.goto(fixtureUrl);
+    await page.addScriptTag({ path: join(root, 'node_modules/react/umd/react.development.js') });
+    await page.addScriptTag({ path: join(root, 'node_modules/react-dom/umd/react-dom.development.js') });
+    await page.evaluate((startingMarkdown) => {
+      const host = document.createElement('div');
+      document.body.appendChild(host);
+      function Editor() {
+        const valueState = React.useState(startingMarkdown);
+        const value = valueState[0];
+        const setValue = valueState[1];
+        const previewState = React.useState(false);
+        const setPreview = previewState[1];
+        return React.createElement('div', null,
+          React.createElement('textarea', {
+            id: 'react-comment',
+            value,
+            onChange(event) { setValue(event.target.value); },
+          }),
+          React.createElement('button', {
+            id: 'react-preview',
+            type: 'button',
+            onClick() { setPreview((flag) => !flag); },
+          }, 'Preview'),
+        );
+      }
+      ReactDOM.flushSync(() => {
+        ReactDOM.createRoot(host).render(React.createElement(Editor));
+      });
+      document.getElementById('react-comment').focus();
+    }, before);
+
+    await triggerBrowserAction(context, extensionId);
+    await page.waitForTimeout(500);
+    const afterInject = await page.locator('#react-comment').inputValue();
+    await page.locator('#react-preview').click();
+    await page.waitForTimeout(200);
+    const afterPreview = await page.locator('#react-comment').inputValue();
+
+    await writeFile(join(outDir, 'textarea-before.txt'), before, 'utf8');
+    await writeFile(join(outDir, 'textarea-after-inject.txt'), afterInject, 'utf8');
+    await writeFile(join(outDir, 'textarea-after-preview.txt'), afterPreview, 'utf8');
+    await page.screenshot({ path: join(outDir, 'fixture-after.png'), fullPage: true });
+
+    const proof = {
+      ok: afterInject === expected && afterPreview === expected,
+      feature: 'convert-react-editor',
+      expected,
+      actualInject: afterInject,
+      actualPreview: afterPreview,
+      fixtureUrl,
+      artifacts: outDir,
+    };
+    await writeFile(join(outDir, 'proof.json'), JSON.stringify(proof, null, 2));
+    console.log(JSON.stringify(proof, null, 2));
+    if (!proof.ok) process.exit(1);
+  });
+}
+
 async function cmdDriveOptionsWidth() {
   const outDir = join(artifactsDir(), 'options-default-size');
   await mkdir(outDir, { recursive: true });
@@ -528,6 +597,7 @@ const handlers = {
   'drive-convert-all': cmdDriveConvertAll,
   'drive-convert-selection': cmdDriveConvertSelection,
   'drive-convert-upload': cmdDriveConvertUpload,
+  'drive-convert-react': cmdDriveConvertReact,
   'drive-options-width': cmdDriveOptionsWidth,
   cleanup: cmdCleanup,
   help: async () => {
@@ -538,6 +608,7 @@ Commands:
   drive-convert-all        Drive convert-all on github-comment fixture; write proof artifacts
   drive-convert-selection  Drive selection-scoped convert (+ no-op selection); write proof
   drive-convert-upload     Drive a GitHub user-attachments img tag on the fixture; write proof
+  drive-convert-react      Drive a React-controlled textarea, then preview; write proof
   drive-options-width      Save options width then convert; prove custom + empty default
   cleanup                  Remove disposable Chrome profile for IMGCONVERTER_RUN_ID
 
