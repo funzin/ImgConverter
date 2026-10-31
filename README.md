@@ -41,8 +41,8 @@ To convert only some images, select their full Markdown text before you click th
 
 <img src="resource/image/screenshot/right_click.png" width="50%" alt="Options in the ImgConverter right-click menu">
 
-2. Enter a value in the **width** field, the **height** field, or both. Use a number, optionally followed by `px` or `%`, such as `200px` or `50%`.
-3. Click **Save**. ImgConverter clears a value that is not that shape.
+2. Enter a value in the **width** field, the **height** field, or both. Use digits, optionally followed by `px` or `%`, such as `200px` or `50%`.
+3. Click **Save**. If a value is not that shape, ImgConverter does not save. The text you typed stays in the field, and the previous width and height stay saved.
 
 ImgConverter uses the saved values for each new `<img>` tag. To return to `width="50%"`, clear both fields and click **Save**.
 

@@ -19,7 +19,7 @@ When you click the ImgConverter icon, `background.js` injects `convert-to-img-ta
 
 `convert-to-img-tag.js` gets the saved width and height with `chrome.storage.sync.get`, then reads `document.activeElement.value`. A password field is included, because a password field has a value. If that value is not a string, the script does nothing. If it is a string, the script replaces each Markdown image whose URL starts with `https:` with an `<img>` tag in the same element. When the element has a selection, the script converts only the selected text. The script does not store the value.
 
-`options.js` reads `chrome.storage.sync` when the options page loads and fills the **width** and **height** fields. A saved value is shown only when it is a number, optionally followed by px or %. When you click **Save**, `options.js` writes `{ width, height }` with `chrome.storage.sync.set`. Each stored value is empty, or a number with an optional px or % suffix. Other text is stored as empty. If both stored values are empty, `convert-to-img-tag.js` adds `width="50%"` at conversion time. ImgConverter computes that default in the page and does not send it anywhere.
+`options.js` reads `chrome.storage.sync` when the options page loads and fills the **width** and **height** fields. A saved value is shown only when it is digits, optionally followed by px or %. When you click **Save**, `options.js` writes `{ width, height }` with `chrome.storage.sync.set` only when every field is empty or digits with an optional px or % suffix. ImgConverter does not store other text. The previous saved values stay, and the text you typed stays in the form. If both stored values are empty, `convert-to-img-tag.js` adds `width="50%"` at conversion time. ImgConverter computes that default in the page and does not send it anywhere.
 
 ### Where that data stays
 
@@ -45,7 +45,7 @@ The use of information received from Google APIs will adhere to the Chrome Web S
 
 The developer of ImgConverter is funzin. The contact address is nakazawa.fumito@gmail.com.
 
-This policy is dated 18 October 2026.
+This policy is dated 31 October 2026.
 
 ## 日本語
 
@@ -62,7 +62,7 @@ ImgConverter のアイコンをクリックすると、`background.js` が `chro
 
 `convert-to-img-tag.js` は `chrome.storage.sync.get` で保存済みの幅と高さを読み込み、`document.activeElement.value` を読み取ります。パスワード欄のように value を持つ要素も対象です。その値が文字列でない場合、スクリプトは何もしません。文字列の場合、URL が `https:` で始まる Markdown 画像を、同じ要素の中で `<img>` タグに置き換えます。要素の中でテキストを選択している場合は、選択した部分だけを変換します。この値は保存しません。
 
-`options.js` は、オプションページを読み込んだときに `chrome.storage.sync` から保存済みの値を読み取り、**width** 欄と **height** 欄に表示します。表示するのは、数字、または数字のあとに px か % が付いた値だけです。**Save** をクリックすると、`options.js` は `{ width, height }` を `chrome.storage.sync.set` で書き込みます。保存される値は空文字列、または数字と任意の px か % です。それ以外の文字は空文字列として保存します。幅と高さがどちらも空の場合、`convert-to-img-tag.js` は変換時に `width="50%"` を付けます。この既定値はページ内で計算し、どこにも送信しません。
+`options.js` は、オプションページを読み込んだときに `chrome.storage.sync` から保存済みの値を読み取り、**width** 欄と **height** 欄に表示します。表示するのは、数字、または数字のあとに px か % が付いた値だけです。**Save** をクリックすると、すべての欄が空、または数字と任意の px か % であるときだけ、`options.js` は `{ width, height }` を `chrome.storage.sync.set` で書き込みます。それ以外の文字は保存しません。以前に保存した幅と高さはそのまま残り、入力した文字も欄に残ります。幅と高さがどちらも空の場合、`convert-to-img-tag.js` は変換時に `width="50%"` を付けます。この既定値はページ内で計算し、どこにも送信しません。
 
 ### データの保存場所
 
@@ -90,4 +90,4 @@ The use of information received from Google APIs will adhere to the Chrome Web S
 
 ImgConverter の開発者は funzin です。連絡先は nakazawa.fumito@gmail.com です。
 
-このポリシーは2026年10月18日付です。
+このポリシーは2026年10月31日付です。
