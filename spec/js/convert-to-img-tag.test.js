@@ -405,6 +405,17 @@ describe('convertToImgTag regex edge cases (characterization)', { concurrency: f
       expect(result).toBe(null)
     })
   })
+
+  describe('when an earlier URL contains a later markdown image', { concurrency: false }, function () {
+    it('replaces the later image at its own position and keeps that text inside the earlier src', function () {
+      var later = '![b](https://evil.test/y.png)'
+      var text = '![a](https://example.com/x' + later + ') ' + later
+      var result = convertToImgTag(text, '')
+      expect(result).toEqual(
+        '<img src="https://example.com/x![b](https://evil.test/y.png)" alt="a"> <img src="https://evil.test/y.png" alt="b">'
+      )
+    })
+  })
 })
 
 describe('GitHub user-attachments uploads', { concurrency: false }, function () {

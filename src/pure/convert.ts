@@ -11,6 +11,7 @@ export type RenderedImage = {
   url: string
   mdImageText: string
   imageTag: string
+  start: number
 }
 
 export function convertEditorText(
@@ -38,13 +39,18 @@ function convertOnlySelectionToImgTag(
 }
 
 function convertToImgTag(text: string, params: ConvertParams): string | null {
-  let replacedText = text
   const mdImageArray = createMarkdownImages(text, params)
   if (mdImageArray == null) return null
-  for (const mdImage of mdImageArray) {
-    replacedText = replacedText.replace(mdImage.mdImageText, () => mdImage.imageTag)
+  const ordered = [...mdImageArray].sort((left, right) => left.start - right.start)
+  let replacedText = ""
+  let cursor = 0
+  for (const mdImage of ordered) {
+    if (mdImage.start < cursor) continue
+    replacedText += text.slice(cursor, mdImage.start)
+    replacedText += mdImage.imageTag
+    cursor = mdImage.start + mdImage.mdImageText.length
   }
-  return replacedText
+  return replacedText + text.slice(cursor)
 }
 
 function escapeAttr(value: string): string {
@@ -93,11 +99,12 @@ function createMarkdownImages(text: string, params: ConvertParams): RenderedImag
   const markdownImageArray: RenderedImage[] = []
   const size = asSize(params)
 
-  function pushImage(url: string, sourceText: string, alt: string): void {
+  function pushImage(url: string, sourceText: string, alt: string, start: number): void {
     markdownImageArray.push({
       url: url,
       mdImageText: sourceText,
       imageTag: imageTag(url, alt, size),
+      start: start,
     })
   }
 
@@ -105,16 +112,16 @@ function createMarkdownImages(text: string, params: ConvertParams): RenderedImag
   for (const match of text.matchAll(markdownImagePattern)) {
     const markdownUrl = namedGroup(match, "url")
     const markdownAlt = namedGroup(match, "alt")
-    if (markdownUrl == null || markdownAlt == null) continue
-    pushImage(markdownUrl, match[0], markdownAlt)
+    if (markdownUrl == null || markdownAlt == null || match.index == null) continue
+    pushImage(markdownUrl, match[0], markdownAlt, match.index)
   }
 
   const githubUploadPattern = /<img width="\d+" height="\d+" alt="(?<alt>[^"]*)" src="(?<url>https:\/\/github\.com\/user-attachments\/assets\/[0-9a-fA-F-]+)" \/>/gi
   for (const match of text.matchAll(githubUploadPattern)) {
     const uploadUrl = namedGroup(match, "url")
     const uploadAlt = namedGroup(match, "alt")
-    if (uploadUrl == null || uploadAlt == null) continue
-    pushImage(uploadUrl, match[0], decodeAttr(uploadAlt))
+    if (uploadUrl == null || uploadAlt == null || match.index == null) continue
+    pushImage(uploadUrl, match[0], decodeAttr(uploadAlt), match.index)
   }
 
   if (markdownImageArray.length == 0) return null

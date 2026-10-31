@@ -63,14 +63,14 @@ function escapeAttr(value) {
     .replaceAll(">", "&gt;")
 }
 
-function expectedTag(alt, widthText, heightText) {
+function expectedTag(alt, widthText, heightText, url = URL) {
   const width = canonicalSize(widthText)
   const height = canonicalSize(heightText)
   const size = width == null && height == null
     ? { width: "50%", height: null }
     : { width, height }
   const attrs = [
-    `src="${escapeAttr(URL)}"`,
+    `src="${escapeAttr(url)}"`,
     `alt="${escapeAttr(alt)}"`,
   ]
   if (size.width) attrs.push(`width="${size.width}"`)
@@ -156,6 +156,16 @@ for (const alt of alts) {
   check(token + token, { width: "", height: "" }, null, tag + tag)
   checkComment("Before ", alt, " After", { width: "", height: "" }, "empty-selection")
 }
+
+const later = "![b](https://evil.test/y.png)"
+const earlierUrl = "https://example.com/x" + later
+const earlierText = `![a](${earlierUrl}) ${later}`
+check(
+  earlierText,
+  { width: "", height: "" },
+  null,
+  `${expectedTag("a", "", "", earlierUrl)} ${expectedTag("b", "", "", "https://evil.test/y.png")}`,
+)
 
 console.log("PASS")
 console.log(`cases: ${cases}`)
