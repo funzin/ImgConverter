@@ -62,7 +62,7 @@ Checked code:
 - the element capture and the `chrome.storage.sync.get` callback in `src/js/convert-to-img-tag.ts`
 - the `tab.id` guard and `executeScript` call in `src/js/background.ts`
 
-The sync commit is `SYNC_COMMIT`.
+The sync commit is `d9fd80e2ed7ea9b05467c9c5e07516b2b819b72d`.
 
 The last confirmed run on that commit printed `PASS` for the five specs: OptionsForm 197 states, ToolbarClick 144, SizeFreeze 60, ClickWithoutTab 6, SecondClick 6.
 
