@@ -11,8 +11,9 @@ page.convertOnlySelectionToImgTag = classicGlobals.convertOnlySelectionToImgTag
 page.createParams = classicGlobals.createParams
 page.createMarkdownImages = classicGlobals.createMarkdownImages
 
+// The storage callback runs later. Remember the element that is focused now.
+const activeTextElement = document.activeElement
 chrome.storage.sync.get(function (storage) {
-  const activeTextElement = document.activeElement
   if (activeTextElement == null) { return }
   const textAreaStr = controlValue(activeTextElement)
   if (textAreaStr == undefined) { return }

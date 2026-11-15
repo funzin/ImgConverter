@@ -1,0 +1,41 @@
+---
+title: "ImgConverter options"
+---
+stateDiagram-v2
+  state "Legend" as legend {
+    lg0: Closed
+    lg1: Loading
+    lg2: Editing
+    lg3: Saved
+    lg4: Rejected
+    lg5: Ready
+  }
+  class lg0 tan
+  class lg1 yellow
+  class lg2 blue
+  class lg3 teal
+  class lg4 orange
+  class lg5 purple
+  s0: Options closed
+  s1: Loading the stored size
+  s2: Shows the stored size
+  s3: Editing a size
+  s4: Saved
+  s5: Save rejected
+  [*] --> s0
+  s0 --> s1: you open options
+  s1 --> s2: the stored size appears
+  s1 --> s3: you type a size
+  s2 --> s3: you type a size
+  s2 --> s4: you click Save [and the size is valid]
+  s3 --> s5: you click Save [and the size is not a number]
+  s3 --> s4: you click Save [and the size is valid]
+  s4 --> s3: you type a size
+  s4 --> s2: the Saved message fades
+  s5 --> s4: you click Save [and the size is valid]
+  class s0 tan
+  class s1 yellow
+  class s2 purple
+  class s3 blue
+  class s4 teal
+  class s5 orange

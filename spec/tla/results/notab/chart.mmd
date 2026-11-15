@@ -1,0 +1,31 @@
+---
+title: "Toolbar click when the tab has no id"
+---
+stateDiagram-v2
+  state "Legend" as legend {
+    lg0: Waiting
+    lg1: Injected
+    lg2: Ignored
+  }
+  class lg0 tan
+  class lg1 teal
+  class lg2 orange
+  s0: This tab has no id
+  s1: Waiting for a click
+  s2: Click ignored
+  s3: Converter script injected
+  s4: Tab is back
+  [*] --> s0
+  [*] --> s1
+  s0 --> s1: a tab is current
+  s0 --> s2: you click the icon [and this tab has no id]
+  s1 --> s0: the tab goes away
+  s1 --> s3: you click the icon
+  s2 --> s4: a tab is current
+  s4 --> s2: the tab goes away
+  s4 --> s3: you click the icon
+  class s0 tan
+  class s1 tan
+  class s2 orange
+  class s3 teal
+  class s4 orange
