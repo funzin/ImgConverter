@@ -10,11 +10,24 @@ type OptionsGlobals = typeof globalThis & {
 (globalThis as OptionsGlobals).loadStorage = loadStorage;
 (globalThis as OptionsGlobals).setText = setText;
 
+let formEpoch = 0
+let draft = false
+let loadsInFlight = 0
+
 loadStorage()
 
 function loadStorage(): void {
+  const epoch = formEpoch
+  draft = false
+  loadsInFlight += 1
   chrome.storage.sync.get(function (size) {
-    (globalThis as OptionsGlobals).setText(size)
+    loadsInFlight -= 1
+    // A save or an edit happened after this read was issued. Leave the form alone.
+    if (epoch !== formEpoch || draft) {
+      return
+    }
+    const options = globalThis as OptionsGlobals
+    options.setText(size)
   })
 }
 
@@ -46,6 +59,13 @@ function showStatus(text: string, clearAfterMs?: number): void {
   }
 }
 
+document.addEventListener("input", function (event) {
+  const target = event.target
+  if (!(target instanceof HTMLInputElement)) return
+  if (target.id !== "width" && target.id !== "height") return
+  draft = true
+})
+
 document.addEventListener("submit", function (event) {
   const target = event.target
   if (!(target instanceof HTMLFormElement)) return
@@ -75,6 +95,8 @@ function labelName(field: HTMLInputElement): string {
 function saveSize(): void {
   const width = requireInput("width")
   const height = requireInput("height")
+  // The fields are still empty because the page is loading, not because the user cleared them.
+  if (!draft && loadsInFlight > 0) return
   const decision = decideSave(width.value, height.value)
   const fields = { width, height }
   width.removeAttribute("aria-invalid")
@@ -98,6 +120,8 @@ function saveSize(): void {
     width: decision.width,
     height: decision.height,
   }
+  formEpoch += 1
+  draft = false
   chrome.storage.sync.set(size);
   (globalThis as OptionsGlobals).setText(size)
   showStatus("Saved", 2000)

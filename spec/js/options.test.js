@@ -212,4 +212,77 @@ describe('Storage', { concurrency: false }, function () {
     })
   })
 
+  describe('when the load and a save overlap', { concurrency: false }, function () {
+    var pending
+    function typeInto(id, value) {
+      var field = document.getElementById(id)
+      field.value = value
+      field.dispatchEvent(new Event('input', { bubbles: true }))
+    }
+    function release(size) {
+      pending.shift()(size)
+    }
+    beforeEach(function () {
+      pending = []
+      chrome.storage.sync.get = function (method) { pending.push(method) }
+    })
+    afterEach(function () {
+      while (pending.length) release({ width: '', height: '' })
+      chrome.storage.sync.get = function (method) { method(global.mockStorageData) }
+    })
+
+    it('does not clear storage when Save is clicked before the load returns', function () {
+      var set = spyOn(chrome.storage.sync, 'set')
+      loadStorage()
+      document.getElementById('save').click()
+      expect(set).not.toHaveBeenCalled()
+      release({ width: '200px', height: '' })
+      expect(document.getElementById('width').value).toBe('200px')
+      expect(document.getElementById('height').value).toBe('')
+    })
+
+    it('does not paint an older size over a save', function () {
+      loadStorage()
+      typeInto('width', '200px')
+      var set = spyOn(chrome.storage.sync, 'set')
+      document.getElementById('save').click()
+      expect(set).toHaveBeenCalledWith({ width: '200px', height: '' })
+      release({ width: '10', height: '' })
+      expect(document.getElementById('width').value).toBe('200px')
+      expect(document.getElementById('height').value).toBe('')
+      expect(document.getElementById('status').textContent).toBe('Saved')
+    })
+
+    it('does not replace a draft when the load returns', function () {
+      loadStorage()
+      typeInto('width', '80')
+      release({ width: '10', height: '100' })
+      expect(document.getElementById('width').value).toBe('80')
+      expect(document.getElementById('height').value).toBe('')
+    })
+
+    it('keeps a rejected size when the load returns', function () {
+      loadStorage()
+      typeInto('width', 'nope')
+      var set = spyOn(chrome.storage.sync, 'set')
+      document.getElementById('save').click()
+      expect(set).not.toHaveBeenCalled()
+      var status = document.getElementById('status').textContent
+      release({ width: '10', height: '' })
+      expect(document.getElementById('width').value).toBe('nope')
+      expect(document.getElementById('status').textContent).toBe(status)
+    })
+
+    it('saves empty fields after the stored size has loaded', function () {
+      chrome.storage.sync.get = function (method) { method({ width: '200px', height: '10' }) }
+      loadStorage()
+      expect(document.getElementById('width').value).toBe('200px')
+      typeInto('width', '')
+      typeInto('height', '')
+      var set = spyOn(chrome.storage.sync, 'set')
+      document.getElementById('save').click()
+      expect(set).toHaveBeenCalledWith({ width: '', height: '' })
+    })
+  })
+
 })

@@ -1,0 +1,40 @@
+---
+title: "ImgConverter toolbar click"
+---
+stateDiagram-v2
+  state "Legend" as legend {
+    lg0: Waiting
+    lg1: Reading
+    lg2: Converted
+    lg3: Skipped
+  }
+  class lg0 tan
+  class lg1 yellow
+  class lg2 teal
+  class lg3 orange
+  s0: Waiting for a click
+  s1: Reading the saved size
+  s2: Whole field converted
+  s3: Field left unchanged
+  s4: Converted, and a click is still reading
+  s5: Selection converted
+  [*] --> s0
+  s0 --> s1: you click the icon
+  s1 --> s2: the whole field converts
+  s1 --> s3: the field stays as it is
+  s2 --> s0: you change the text
+  s2 --> s4: you click the icon
+  s1 --> s5: the selection converts
+  s3 --> s1: you click the icon
+  s3 --> s0: you change the text
+  s4 --> s1: you change the text
+  s5 --> s0: you change the text
+  s5 --> s4: you click the icon
+  s4 --> s2: the field stays as it is
+  s4 --> s5: the field stays as it is
+  class s0 tan
+  class s1 yellow
+  class s2 teal
+  class s3 orange
+  class s4 yellow
+  class s5 teal

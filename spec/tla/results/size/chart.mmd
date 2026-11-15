@@ -1,0 +1,32 @@
+---
+title: "Which saved size a click uses"
+---
+stateDiagram-v2
+  state "Legend" as legend {
+    lg0: Waiting
+    lg1: Reading
+    lg2: Converted
+  }
+  class lg0 tan
+  class lg1 yellow
+  class lg2 teal
+  s0: Waiting for a click
+  s1: Reading the saved size
+  s2: Converted with the default width
+  s3: Converted, and a click is still reading
+  s4: Converted with the saved width
+  [*] --> s0
+  s0 --> s1: you click the icon
+  s1 --> s2: the field converts [with the default width]
+  s2 --> s0: you change the text
+  s2 --> s3: you click the icon
+  s1 --> s4: the field converts [with the saved width]
+  s4 --> s0: you change the text
+  s4 --> s3: you click the icon
+  s3 --> s2: the field stays as it is
+  s3 --> s4: the field stays as it is
+  class s0 tan
+  class s1 yellow
+  class s2 teal
+  class s3 yellow
+  class s4 teal
